@@ -1,231 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COMRADE'S BOT | Vinnie Hub</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<style>
-:root {
-    --primary: #3b82f6;
-    --accent: #10b981;
-    --bg-start: #020617;
-    --bg-end: #0f172a;
-    --btn-gradient: linear-gradient(135deg, #3b82f6, #06b6d4);
-}
-body {
-    margin: 0;
-    font-family: 'Rajdhani', sans-serif;
-    background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-}
-#particles-js { position: fixed; top:0; width:100%; height:100%; z-index:-1; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMRADES-MD | The Future of WhatsApp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --card-bg: #0f0f0f;
+            --accent: #ffffff;
+            --border: #1a1a1a;
+            --text-secondary: #888888;
+        }
 
-.container {
-    background: rgba(30,41,59,0.75);
-    backdrop-filter: blur(15px);
-    padding: 30px;
-    border-radius: 20px;
-    border: 2px solid var(--primary);
-    width: 90%;
-    max-width: 480px;
-    text-align: center;
-    margin-top: 60px;
-}
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: white;
+            overflow-x: hidden;
+        }
 
-h1 { font-family:'Orbitron'; margin-bottom: 25px; }
+        /* Glass Navbar */
+        nav {
+            padding: 20px 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-input {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    border: 2px solid #334155;
-    background: #0f172a;
-    color: white;
-    font-size: 1rem;
-    outline: none;
-    box-sizing: border-box;
-    transition: border 0.3s ease;
-}
-input:focus { border-color: var(--accent); }
+        .logo { font-family: 'Orbitron'; font-weight: 700; letter-spacing: 2px; font-size: 1.2rem; }
 
-button {
-    width: 100%;
-    padding: 16px;
-    margin-bottom: 15px;
-    border: none;
-    border-radius: 12px;
-    background: var(--btn-gradient);
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px var(--primary); }
+        /* Hero Section */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 10%;
+            background: radial-gradient(circle at center, #111 0%, #050505 100%);
+        }
 
-.result-box {
-    display: none;
-    margin-top: 20px;
-    background: #020617;
-    padding: 20px;
-    border-radius: 12px;
-    border-left: 5px solid var(--accent);
-    box-shadow: 0 0 15px var(--accent);
-    text-align: center;
-}
+        .hero h1 {
+            font-family: 'Orbitron';
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin: 0;
+            line-height: 1;
+        }
 
-.code-area {
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
-    word-break: break-all;
-    margin: 10px 0;
-    background: #1e293b;
-    padding: 15px;
-    border-radius: 8px;
-    max-height: 120px;
-    overflow-y: auto;
-    border: 2px solid #334155;
-}
+        .hero p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            font-size: 1.1rem;
+            margin: 20px 0 40px 0;
+        }
 
-.copy-btn {
-    background: var(--accent);
-    padding: 10px 18px;
-    font-size: 0.85rem;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
+        .btn-main {
+            padding: 18px 40px;
+            background: var(--accent);
+            color: black;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 5px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-#toast {
-    visibility: hidden;
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent);
-    color: white;
-    padding: 12px 30px;
-    border-radius: 50px;
-    z-index: 100;
-    font-weight: bold;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-#toast.show { visibility: visible; animation: fadeInUp 0.5s; }
-@keyframes fadeInUp { from { opacity:0; transform:translate(-50%,20px); } to { opacity:1; transform:translate(-50%,0); } }
+        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
 
-#qr-container img { border-radius: 15px; border: 4px solid var(--accent); box-shadow:0 0 20px var(--accent); width: 220px; margin: 0 auto; display:block; transition: transform 0.3s ease;}
-#qr-container img:hover { transform: scale(1.05); }
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 100px 10%;
+        }
 
-.description {
-    font-size: 0.85rem;
-    color: #94a3b8;
-    margin-top: 10px;
-}
-</style>
+        .card {
+            background: var(--card-bg);
+            padding: 40px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .card:hover { border-color: #333; transform: translateY(-5px); }
+        .card i { font-size: 2rem; margin-bottom: 20px; }
+        .card h3 { margin-bottom: 15px; font-family: 'Orbitron'; font-size: 1rem; }
+        .card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 <body>
-<div id="particles-js"></div>
+    <nav>
+        <div class="logo">COMRADES-MD</div>
+        <a href="https://github.com/your-repo" style="color:white; text-decoration:none;"><i class="fab fa-github"></i></a>
+    </nav>
 
-<div class="container">
-    <h1><i class="fas fa-robot"></i> COMRADE BOT</h1>
-    <input type="text" id="phone" placeholder="Enter WhatsApp Number (254...)">
+    <section class="hero">
+        <h1>POWER. SPEED. <br> SIMPLICITY.</h1>
+        <p>Introducing COMRADES-MD: The most advanced WhatsApp multi-device bot designed for automation, group management, and seamless performance.</p>
+        <a href="session.html" class="btn-main">Get Started <i class="fas fa-arrow-right"></i></a>
+    </section>
 
-    <button onclick="getQRCode()"><i class="fas fa-qrcode"></i> Get Session via QR</button>
-    <button onclick="getPairCode()"><i class="fas fa-key"></i> Get Session via Pairing Code</button>
+    <section class="features">
+        <div class="card">
+            <i class="fas fa-bolt" style="color: #fbbf24;"></i>
+            <h3>Ultra Fast</h3>
+            <p>Built on the latest Baileys library for near-instant response times and low latency.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-shield-alt" style="color: #10b981;"></i>
+            <h3>Safe & Secure</h3>
+            <p>End-to-end encryption maintained. We never store your personal chats or media.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-code" style="color: #3b82f6;"></i>
+            <h3>Open Source</h3>
+            <p>Fully customizable. Add your own commands and plugins with ease.</p>
+        </div>
+    </section>
 
-    <div id="status-text" class="description">System Ready</div>
-
-    <div id="qr-container"></div>
-
-    <div id="pair-area" class="result-box">
-        <div style="font-weight:bold; color: var(--accent)">Pairing Code</div>
-        <div id="pair-display" class="code-area"></div>
-        <div class="description">Enter this code on your phone to link your WhatsApp</div>
-        <button class="copy-btn" onclick="copy('pair-display')"><i class="fas fa-copy"></i> COPY CODE</button>
-    </div>
-
-    <div id="session-area" class="result-box">
-        <div style="font-weight:bold; color: var(--accent)">Session ID</div>
-        <div id="session-display" class="code-area"></div>
-        <div class="description">Use this session ID to deploy your bot (e.g., on Heroku). It expires in 2 hours.</div>
-        <button class="copy-btn" onclick="copy('session-display')"><i class="fas fa-copy"></i> COPY SESSION ID</button>
-    </div>
-</div>
-
-<div id="toast">Copied to clipboard!</div>
-
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script>
-particlesJS("particles-js", { "particles": { "number": { "value": 80 }, "color": { "value": "#ffffff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.2 }, "size": { "value": 2 }, "line_linked": { "enable": true, "distance": 150, "color": "#3b82f6", "opacity": 0.1 }, "move": { "enable": true, "speed": 1 } }});
-
-const backendURL = window.location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1")
-    ? "http://localhost:3000"
-    : "https://comrades-session-65daf07fdaad.herokuapp.com";
-
-const socket = io(backendURL, { transports: ['websocket','polling'], withCredentials:true });
-
-function formatPhone(number){
-    number = number.trim();
-    if(number.startsWith("07")) return "254" + number.slice(1);
-    return number;
-}
-
-function getQRCode(){
-    const phone = document.getElementById('phone').value;
-    if(!phone) return alert("Enter phone number");
-    document.getElementById('status-text').innerText = "📸 Requesting QR Code...";
-    fetch(`${backendURL}/start-qr`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ phoneNumber: formatPhone(phone) }) });
-}
-
-function getPairCode(){
-    const phone = document.getElementById('phone').value;
-    if(!phone) return alert("Enter phone number");
-    document.getElementById('status-text').innerText = "🔑 Requesting Pairing Code...";
-    fetch(`${backendURL}/start-pairing`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ phoneNumber: formatPhone(phone) }) });
-}
-
-function copy(id){
-    const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text);
-    const t = document.getElementById('toast');
-    t.className = "show";
-    setTimeout(()=>t.className="",3000);
-}
-
-socket.on('qr', u => {
-    document.getElementById('status-text').innerText = "📸 Scan QR Code";
-    document.getElementById('qr-container').innerHTML = `<img src="${u}" alt="QR Code">`;
-    document.getElementById('pair-area').style.display="none";
-    document.getElementById('session-area').style.display="none";
-});
-
-socket.on('pairing-code', c => {
-    document.getElementById('status-text').innerText = "🔑 Enter code on phone";
-    document.getElementById('pair-area').style.display = "block";
-    document.getElementById('pair-display').innerText = c;
-    document.getElementById('qr-container').innerHTML="";
-    document.getElementById('session-area').style.display="none";
-});
-
-socket.on('session-ready', id => {
-    document.getElementById('status-text').innerText = "✅ Session Secured!";
-    document.getElementById('session-area').style.display = "block";
-    document.getElementById('session-display').innerText = id;
-    document.getElementById('qr-container').innerHTML="";
-    document.getElementById('pair-area').style.display="none";
-});
-
-socket.on('status', msg => document.getElementById('status-text').innerText = msg);
-</script>
+    <footer>
+        &copy; 2026 COMRADES-MD | Engineered for Excellence
+    </footer>
 </body>
 </html>
