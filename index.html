@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMRADES-MD | System Terminal</title>
+    <title>COMRADES-MD | Final Protocol</title>
     
     <link rel="icon" type="image/png" href="https://img.icons8.com/matrix/50/00ff41/matrix-desktop.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,156 +12,116 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     
     <style>
-        :root {
-            --bg: #000000;
-            --matrix-green: #00ff41;
-            --matrix-glow: rgba(0, 255, 65, 0.4);
-            --border: rgba(0, 255, 65, 0.3);
-        }
-
+        :root { --bg: #000; --green: #00ff41; --glow: rgba(0, 255, 65, 0.3); }
+        
         body::before {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             z-index: 9999; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
 
-        html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background: var(--bg); color: #fff; font-family: 'Share Tech Mono', monospace;
-            overflow-x: hidden; scrollbar-width: none;
-        }
-
-        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 0; opacity: 0.15; }
-        .view-wrapper { position: relative; z-index: 10; }
-        .view { display: none; min-height: 100vh; }
+        html, body { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Share Tech Mono', monospace; overflow-x: hidden; }
+        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 0; opacity: 0.1; }
+        .wrapper { position: relative; z-index: 10; }
+        .view { display: none; min-height: 100vh; padding: 20px; }
         .view.active { display: block; }
 
-        nav { padding: 30px 10%; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-family: 'Orbitron'; letter-spacing: 5px; text-shadow: 0 0 10px var(--matrix-green); }
+        .logo { font-family: 'Orbitron'; letter-spacing: 5px; text-shadow: 0 0 10px var(--green); text-align: center; }
+        
+        /* Grid Deployment */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; width: 80%; margin: 30px auto; }
+        .card { border: 1px solid rgba(0,255,65,0.2); padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.8); }
+        .card:hover { border-color: var(--green); box-shadow: 0 0 15px var(--glow); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 0 10%; }
-        .card { 
-            background: rgba(0,0,0,0.8); padding: 20px; border: 1px solid var(--border); 
-            text-align: center; cursor: pointer; transition: 0.3s;
-        }
-        .card:hover { border-color: var(--matrix-green); box-shadow: 0 0 15px var(--matrix-glow); }
-
-        /* Terminal UI */
-        .session-container {
-            width: 90%; max-width: 500px; background: #000; padding: 30px; 
-            border: 1px solid var(--matrix-green); margin: 40px auto;
-            box-shadow: 0 0 20px var(--matrix-glow);
+        /* Terminal Main */
+        .term-container {
+            max-width: 500px; margin: 50px auto; background: #000; border: 1px solid var(--green);
+            padding: 30px; box-shadow: 0 0 25px var(--glow);
         }
 
-        .iti { width: 100%; margin-bottom: 25px; }
+        .iti { width: 100%; margin-bottom: 20px; }
         input[type="tel"] {
-            width: 100% !important; background: #000 !important;
-            padding: 18px 18px 18px 85px !important; border: 1px solid var(--matrix-green) !important;
-            color: var(--matrix-green) !important; font-family: 'Share Tech Mono';
+            width: 100% !important; background: #000 !important; border: 1px solid var(--green) !important;
+            color: var(--green) !important; padding: 15px 15px 15px 80px !important; font-family: 'Share Tech Mono';
         }
 
-        /* Result Displays */
-        .pairing-box {
-            display: none; background: #080808; border: 1px dashed var(--matrix-green);
-            padding: 20px; margin-top: 20px; text-align: center;
-        }
-        .code-val { color: var(--matrix-green); font-size: 2.2rem; font-weight: bold; letter-spacing: 8px; margin: 10px 0; }
+        .btn-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn { flex: 1; padding: 12px; border: 1px solid var(--green); background: transparent; color: var(--green); font-weight: bold; cursor: pointer; font-family: 'Share Tech Mono'; }
+        .btn-fill { background: var(--green); color: #000; }
 
-        .session-id-box {
-            display: none; background: #001a00; border: 2px solid var(--matrix-green);
-            padding: 20px; margin-top: 25px; text-align: left;
-            animation: pulse 2s infinite;
+        /* Content Areas */
+        #display-zone { margin-top: 20px; text-align: center; min-height: 50px; }
+        .session-result { 
+            display: none; border: 2px solid var(--green); padding: 20px; 
+            margin-top: 20px; background: #001a00; animation: blink 1.5s infinite;
         }
-        @keyframes pulse { 0% { box-shadow: 0 0 5px var(--matrix-glow); } 50% { box-shadow: 0 0 20px var(--matrix-glow); } 100% { box-shadow: 0 0 5px var(--matrix-glow); } }
+        @keyframes blink { 0% { border-color: #004400; } 50% { border-color: var(--green); } 100% { border-color: #004400; } }
 
-        #loading-bar {
-            display: none; margin: 15px auto; width: 100%; height: 2px;
-            background: #111; position: relative; overflow: hidden;
-        }
-        #loading-bar::after {
-            content: ""; position: absolute; left: -50%; width: 50%; height: 100%;
-            background: var(--matrix-green); animation: loading 1s infinite linear;
-        }
-        @keyframes loading { from { left: -50%; } to { left: 100%; } }
+        .loading-line { display: none; width: 100%; height: 2px; background: #111; overflow: hidden; margin: 10px 0; }
+        .loading-line::after { content: ""; display: block; width: 40%; height: 100%; background: var(--green); animation: slide 1s infinite; }
+        @keyframes slide { from { margin-left: -40%; } to { margin-left: 100%; } }
 
-        .music-btn {
-            position: fixed; bottom: 30px; left: 30px; z-index: 1000;
-            background: #000; border: 1px solid var(--matrix-green); padding: 8px 15px; color: var(--matrix-green); cursor: pointer; font-size: 0.7rem;
-        }
+        .music-btn { position: fixed; bottom: 20px; left: 20px; padding: 5px 10px; border: 1px solid var(--green); color: var(--green); cursor: pointer; font-size: 0.6rem; z-index: 10000; }
 
-        /* Fork Guard Modal */
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; }
-        #fork-guard {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 300px; background: #000; border: 2px solid var(--matrix-green); padding: 30px; z-index: 10001; text-align: center;
-        }
+        /* Modal */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 20000; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 1px solid var(--green); background: #000; padding: 30px; z-index: 20001; text-align: center; width: 280px; }
     </style>
 </head>
 <body>
 
     <canvas id="matrix-canvas"></canvas>
+    <div class="music-btn" onclick="toggleMusic()" id="m-btn">PLAY_OS</div>
 
     <div class="overlay" id="overlay"></div>
-    <div id="fork-guard">
-        <h3 class="logo" style="font-size: 0.9rem;">SECURITY_VETT_REQUIRED</h3>
-        <input type="text" id="gh-user" style="width:80%; background:transparent; border:1px solid var(--matrix-green); color:var(--matrix-green); padding:10px; text-align:center; margin:20px 0;" placeholder="GITHUB_USERNAME">
-        <button onclick="verifyFork()" style="background: var(--matrix-green); color:#000; border:none; padding:10px 20px; font-weight:bold; cursor:pointer; width:100%;">VALIDATE_FORK</button>
-        <p onclick="closeGuard()" style="margin-top: 15px; font-size: 0.5rem; cursor:pointer; color: #444;">[ ABORT ]</p>
+    <div class="modal" id="fork-modal">
+        <div class="logo" style="font-size: 0.8rem;">FORK_VERIFICATION</div>
+        <input type="text" id="gh-name" style="width:90%; background:transparent; border:1px solid var(--green); color:var(--green); margin:20px 0; padding:10px; text-align:center;" placeholder="GITHUB_USER">
+        <button class="btn btn-fill" style="width:100%;" onclick="checkFork()">RUN_VERIFY</button>
+        <p onclick="closeGuard()" style="font-size: 0.5rem; margin-top: 15px; cursor: pointer;">[ ABORT ]</p>
     </div>
 
-    <div class="view-wrapper">
+    <div class="wrapper">
         <audio id="bg-audio" loop src="https://raw.githubusercontent.com/Vinny256/COMRADES-MD/main/assets/play.mp3"></audio>
-        <div class="music-btn" id="play-pause-btn" onclick="toggleMusic()">PLAY_SOUND</div>
 
-        <section id="home-view" class="view active">
-            <nav>
-                <div class="logo">COMRADES-MD</div>
-                <a href="https://github.com/Vinny256/COMRADES-MD" style="color:var(--matrix-green);"><i class="fab fa-github"></i></a>
-            </nav>
-
-            <div style="height: 55vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <h1 class="logo" style="font-size: 3.5rem;">NEURAL_BOT</h1>
-                <button class="btn-main" onclick="startExperience()" style="margin-top: 30px; padding: 15px 40px; background:transparent; border:2px solid #0f0; color:#0f0; cursor:pointer; font-family:'Share Tech Mono'; font-weight:bold;">INITIALIZE_INTERFACE</button>
+        <section id="home" class="view active">
+            <div class="logo" style="margin-top: 100px; font-size: 3rem;">COMRADES-MD</div>
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="btn btn-fill" style="padding: 15px 50px;" onclick="goTo('term')">OPEN_TERMINAL</button>
             </div>
-
             <div class="grid">
-                <div class="card" onclick="window.open('https://github.com/Vinny256/COMRADES-MD')"><i class="fas fa-code"></i><p>SOURCE</p></div>
-                <div class="card" onclick="openGuard('https://dashboard.heroku.com/new?template=https://github.com/Vinny256/COMRADES-MD')"><i class="fas fa-server"></i><p>HEROKU</p></div>
-                <div class="card" onclick="openGuard('https://railway.app/new/template?template=https://github.com/Vinny256/COMRADES-MD')"><i class="fas fa-train"></i><p>RAILWAY</p></div>
-                <div class="card" onclick="openGuard('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD')"><i class="fas fa-cloud"></i><p>RENDER</p></div>
+                <div class="card" onclick="window.open('https://github.com/Vinny256/COMRADES-MD')"><i class="fas fa-code"></i><br>SOURCE</div>
+                <div class="card" onclick="openGuard('https://dashboard.heroku.com/new?template=https://github.com/Vinny256/COMRADES-MD')"><i class="fas fa-server"></i><br>HEROKU</div>
+                <div class="card" onclick="openGuard('https://railway.app/new/template?template=https://github.com/Vinny256/COMRADES-MD')"><i class="fas fa-train"></i><br>RAILWAY</div>
+                <div class="card" onclick="openGuard('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD')"><i class="fas fa-cloud"></i><br>RENDER</div>
             </div>
-            <footer style="margin-top:40px; text-align:center; opacity:0.3; font-size:0.6rem; letter-spacing:3px;">COMRADES-MD SYSTEM // BY VINNY256</footer>
         </section>
 
-        <section id="session-view" class="view">
-            <div class="session-container">
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-size:0.7rem;">
-                    <span onclick="showView('home-view')" style="cursor:pointer; color: var(--matrix-green);">[ BACK ]</span>
-                    <span id="term-path" style="color:#444;">root@comrades:~/auth$</span>
+        <section id="term" class="view">
+            <div class="term-container">
+                <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #444; margin-bottom: 20px;">
+                    <span onclick="goTo('home')" style="cursor: pointer; color: var(--green);">[ EXIT ]</span>
+                    <span>root@comrades-md:~/auth</span>
                 </div>
+
+                <input type="tel" id="phone_num">
                 
-                <input type="tel" id="phone">
-                
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="getQRCode()" style="flex:1; padding: 15px; background: #fff; color:#000; border:none; font-weight:bold; cursor:pointer;">QR_SCAN</button>
-                    <button onclick="getPairCode()" style="flex:1; padding: 15px; background: transparent; color:var(--matrix-green); border:1px solid var(--matrix-green); font-weight:bold; cursor:pointer;">PAIR_CODE</button>
+                <div class="btn-row">
+                    <button class="btn" onclick="requestQR()">GET_QR_CODE</button>
+                    <button class="btn" onclick="requestPair()">GET_PAIRING_CODE</button>
                 </div>
 
-                <div id="loading-bar"></div>
+                <div class="loading-line" id="loader"></div>
 
-                <div id="qr-container" style="margin-top: 20px; text-align: center;"></div>
-
-                <div id="pairing-area" class="pairing-box">
-                    <div style="font-size: 0.6rem; color: #888;">WHATSAPP_PAIRING_CODE</div>
-                    <div id="pairing-val" class="code-val"></div>
-                    <button onclick="copy('pairing-val')" style="background:var(--matrix-green); color:#000; border:none; padding:8px; width:100%; font-weight:bold; cursor:pointer; font-size:0.7rem;">COPY_CODE</button>
+                <div id="display-zone">
+                    <div style="color: #333; font-size: 0.7rem;">NO_ACTIVE_HANDSHAKE</div>
                 </div>
 
-                <div id="session-id-area" class="session-id-box">
-                    <div style="color: var(--matrix-green); font-size: 0.7rem; margin-bottom: 10px;">[ SESSION_DECRYPTED_SUCCESS ]</div>
-                    <div id="session-val" style="word-break: break-all; font-weight: bold; font-size: 0.9rem; color: #fff; margin-bottom: 15px;"></div>
-                    <button onclick="copy('session-val')" style="background:var(--matrix-green); color:#000; border:none; padding:10px; width:100%; font-weight:bold; cursor:pointer;">COPY_SESSION_ID</button>
+                <div id="session-box" class="session-result">
+                    <div style="font-size: 0.6rem; color: var(--green); margin-bottom: 10px;">> SESSION_ESTABLISHED_SUCCESSFULLY</div>
+                    <div id="session-id-text" style="word-break: break-all; font-weight: bold; color: #fff; font-size: 0.8rem; margin-bottom: 15px; border: 1px dashed var(--green); padding: 10px;"></div>
+                    <button class="btn btn-fill" style="width: 100%; font-size: 0.7rem;" onclick="copy('session-id-text')">COPY_SESSION_ID</button>
                 </div>
             </div>
         </section>
@@ -172,107 +132,104 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
-        // Matrix Canvas
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
-        const fontSize = 16; const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-        function draw() { ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "#0F0"; ctx.font = fontSize + "px monospace"; for(let i=0; i<drops.length; i++){ const text = alphabet[Math.floor(Math.random()*alphabet.length)]; ctx.fillText(text, i*fontSize, drops[i]*fontSize); if(drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++; } }
-        setInterval(draw, 40);
+        // Matrix Rain
+        const c = document.getElementById('matrix-canvas');
+        const x = c.getContext('2d');
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        const m = "010101010101010101010101";
+        const f = 16; const col = c.width/f; const d = Array(Math.floor(col)).fill(1);
+        function draw() { x.fillStyle="rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height); x.fillStyle="#0f0"; x.font=f+"px monospace"; for(let i=0;i<d.length;i++){ x.fillText(m[Math.floor(Math.random()*m.length)],i*f,d[i]*f); if(d[i]*f>c.height&&Math.random()>0.975)d[i]=0; d[i]++; } }
+        setInterval(draw, 50);
 
-        function showToast(msg, isError = false) {
-            Toastify({ text: msg, duration: 3000, style: { background: "#000", border: `1px solid ${isError ? '#f00' : '#0f0'}`, color: isError ? '#f00' : '#0f0', fontFamily: 'Share Tech Mono' } }).showToast();
-        }
+        function toast(t, err=false) { Toastify({ text: t, duration: 3000, style: { background: "#000", color: err?"#f00":"#0f0", border: `1px solid ${err?"#f00":"#0f0"}`, fontFamily: 'Share Tech Mono' } }).showToast(); }
 
         const socket = io("https://comrades-session-65daf07fdaad.herokuapp.com");
-        const loader = document.getElementById('loading-bar');
-        const phoneInput = document.querySelector("#phone");
-        const iti = window.intlTelInput(phoneInput, { separateDialCode: true, initialCountry: "ke", utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js" });
+        const iti = window.intlTelInput(document.querySelector("#phone_num"), { separateDialCode: true, initialCountry: "ke", utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js" });
 
-        let sessionActive = false;
-
-        function getQRCode() {
-            if(sessionActive) return;
-            loader.style.display = "block";
-            document.getElementById('qr-container').innerHTML = "";
-            document.getElementById('pairing-area').style.display = "none";
+        // MANUAL REQUESTS
+        function requestQR() {
+            toast("INJECTING_QR_REQUEST...");
+            document.getElementById('loader').style.display = "block";
+            document.getElementById('display-zone').innerHTML = ""; 
+            // Only hits backend now
             fetch(`${socket.io.uri}/start-qr`, { method: 'POST' });
         }
 
-        function getPairCode() {
-            const num = iti.getNumber().replace(/\D/g, '');
-            if(!phoneInput.value.trim() || num.length < 8) {
-                showToast("INVALID_TARGET_NUMBER", true);
-                return;
-            }
-            loader.style.display = "block";
-            document.getElementById('qr-container').innerHTML = "";
-            // We keep the pairing area hidden until the SPECIFIC socket event returns
+        function requestPair() {
+            const n = iti.getNumber().replace(/\D/g, '');
+            if(n.length < 8) return toast("INVALID_TARGET", true);
+            
+            toast(`REQUESTING_PAIR_FOR: +${n}`);
+            document.getElementById('loader').style.display = "block";
+            document.getElementById('display-zone').innerHTML = "";
+            // Only hits backend now
             fetch(`${socket.io.uri}/start-pairing`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phoneNumber: num })
+                body: JSON.stringify({ phoneNumber: n })
             });
         }
 
-        // --- SOCKET LOGIC ---
-
+        // SOCKET LISTENERS (Manual Reaction)
         socket.on('qr', url => {
-            loader.style.display = "none";
-            document.getElementById('qr-container').innerHTML = `<img src="${url}" style="width:200px; border:2px solid #0f0; background:#fff; padding:10px;">`;
-            showToast("QR_GENERATED");
+            document.getElementById('loader').style.display = "none";
+            document.getElementById('display-zone').innerHTML = `<img src="${url}" style="width:220px; border:3px solid #fff; padding:10px; background:#fff;">`;
+            toast("QR_CODE_READY");
         });
 
         socket.on('pairing-code', code => {
-            loader.style.display = "none";
-            // Sticky logic: Pairing box stays until a session is found or new request made
-            document.getElementById('pairing-area').style.display = "block";
-            document.getElementById('pairing-val').innerText = code;
-            showToast("PAIR_CODE_RECEIVED");
+            document.getElementById('loader').style.display = "none";
+            document.getElementById('display-zone').innerHTML = `
+                <div style="border:1px dashed #0f0; padding:20px;">
+                    <div style="font-size:0.6rem; color:#888;">ENTER_IN_WHATSAPP</div>
+                    <div id="p-val" style="font-size:2.5rem; letter-spacing:8px; color:#0f0; font-weight:bold; margin:10px 0;">${code}</div>
+                    <button class="btn" style="width:100%" onclick="copy('p-val')">COPY_CODE</button>
+                </div>`;
+            toast("PAIRING_CODE_RECEIVED");
         });
 
-        // This is the "From the Backend" Session ID event
-        socket.on('session', sessionId => {
-            sessionActive = true;
-            loader.style.display = "none";
-            // Clear everything and show ONLY the Session ID
-            document.getElementById('qr-container').innerHTML = "";
-            document.getElementById('pairing-area').style.display = "none";
-            
-            document.getElementById('session-id-area').style.display = "block";
-            document.getElementById('session-val').innerText = sessionId;
-            showToast("SESSION_ID_DECRYPTED");
+        // SUCCESSFUL LINK (SESSION ID)
+        socket.on('session', id => {
+            document.getElementById('loader').style.display = "none";
+            // WIPE EVERYTHING ELSE
+            document.getElementById('display-zone').innerHTML = "";
+            // SHOW THE INTERACTIVE SESSION BOX
+            const sBox = document.getElementById('session-box');
+            sBox.style.display = "block";
+            document.getElementById('session-id-text').innerText = id;
+            toast("SESSION_LINKED_SUCCESS!");
         });
 
         function copy(id) {
-            const val = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(val);
-            showToast("COPIED_TO_CLIPBOARD");
+            const t = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(t);
+            toast("COPIED_TO_CLIPBOARD");
         }
 
-        // SPA & Guards
-        function showView(v) { document.querySelectorAll('.view').forEach(e => e.classList.remove('active')); document.getElementById(v).classList.add('active'); }
-        function startExperience() { toggleMusic(true); showView('session-view'); }
-        function toggleMusic(f=false) { const a = document.getElementById('bg-audio'); if(a.paused || f){ a.play().catch(()=>{}); document.getElementById('play-pause-btn').innerText="PAUSE"; } else { a.pause(); document.getElementById('play-pause-btn').innerText="PLAY"; } }
-        
-        function openGuard(u) { pendingUrl = u; document.getElementById('overlay').style.display='block'; document.getElementById('fork-guard').style.display='block'; }
-        function closeGuard() { document.getElementById('overlay').style.display='none'; document.getElementById('fork-guard').style.display='none'; }
-        async function verifyFork() {
-            const user = document.getElementById('gh-user').value.trim();
-            if(!user) return showToast("USER_ID_REQUIRED", true);
+        // SPA & GUARD
+        let pending = "";
+        function goTo(id) { document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id==='term') toggleMusic(true); }
+        function openGuard(u) { pending=u; document.getElementById('overlay').style.display='block'; document.getElementById('fork-modal').style.display='block'; }
+        function closeGuard() { document.getElementById('overlay').style.display='none'; document.getElementById('fork-modal').style.display='none'; }
+        async function checkFork() {
+            const u = document.getElementById('gh-name').value.trim();
+            if(!u) return toast("USER_REQUIRED", true);
             try {
                 const res = await fetch(`https://api.github.com/repos/Vinny256/COMRADES-MD/forks`);
-                const forks = await res.json();
-                if(forks.some(f => f.owner.login.toLowerCase() === user.toLowerCase())) {
-                    showToast("ACCESS_GRANTED");
-                    setTimeout(() => { window.open(pendingUrl, '_blank'); closeGuard(); }, 1000);
+                const f = await res.json();
+                if(f.some(x=>x.owner.login.toLowerCase()===u.toLowerCase())) {
+                    toast("VERIFIED"); setTimeout(()=>{ window.open(pending); closeGuard(); }, 1000);
                 } else {
-                    showToast("FORK_STATUS_NULL", true);
-                    setTimeout(() => window.open(`https://github.com/Vinny256/COMRADES-MD/fork`), 1500);
+                    toast("NOT_FORKED", true); setTimeout(()=>window.open('https://github.com/Vinny256/COMRADES-MD/fork'), 1000);
                 }
-            } catch(e) { showToast("API_THROTTLED"); }
+            } catch(e) { toast("API_ERROR", true); }
+        }
+
+        function toggleMusic(force=false) {
+            const a = document.getElementById('bg-audio');
+            const b = document.getElementById('m-btn');
+            if(a.paused || force) { a.play().catch(()=>{}); b.innerText="STOP_OS"; }
+            else { a.pause(); b.innerText="PLAY_OS"; }
         }
     </script>
 </body>
