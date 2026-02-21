@@ -3,149 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMRADES-MD | Matrix Edition</title>
+    <title>COMRADES-MD | Neural Terminal</title>
+    
+    <link rel="icon" type="image/png" href="https://img.icons8.com/matrix/50/00ff41/matrix-desktop.png">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
     
     <style>
         :root {
             --bg: #000000;
             --matrix-green: #00ff41;
-            --card-bg: rgba(0, 0, 0, 0.85);
+            --matrix-glow: rgba(0, 255, 65, 0.4);
+            --card-bg: rgba(0, 0, 0, 0.9);
             --border: rgba(0, 255, 65, 0.2);
+        }
+
+        /* CRT Filter */
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
+            z-index: 9999; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
 
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: var(--bg); color: white; font-family: 'Inter', sans-serif;
+            background: var(--bg); color: #fff; font-family: 'Share Tech Mono', monospace;
             overflow-x: hidden; scrollbar-width: none;
         }
         body::-webkit-scrollbar { display: none; }
 
-        /* Matrix Canvas */
-        #matrix-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; opacity: 0.15;
+        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 0; opacity: 0.15; }
+
+        .view-wrapper { position: relative; z-index: 10; }
+        .view { display: none; min-height: 100vh; padding-bottom: 50px; }
+        .view.active { display: block; animation: terminalOpen 0.5s ease-out; }
+        @keyframes terminalOpen { from { opacity: 0; transform: scaleY(0); } to { opacity: 1; transform: scaleY(1); } }
+
+        /* UI Styles */
+        nav { padding: 30px 10%; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Orbitron'; letter-spacing: 5px; text-shadow: 0 0 10px var(--matrix-green); }
+
+        .hero { height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .btn-main {
+            padding: 15px 40px; background: transparent; border: 2px solid var(--matrix-green);
+            color: var(--matrix-green); font-weight: bold; letter-spacing: 3px; cursor: pointer; transition: 0.3s;
         }
+        .btn-main:hover { background: var(--matrix-green); color: #000; box-shadow: 0 0 30px var(--matrix-green); }
 
-        .view-wrapper { position: relative; z-index: 1; }
-
-        .view { display: none; min-height: 100vh; }
-        .view.active { display: block; }
-
-        /* Logo & Glitch */
-        .logo { 
-            font-family: 'Orbitron'; font-weight: 700; letter-spacing: 5px; 
-            color: #fff; text-shadow: 0 0 10px var(--matrix-green);
-        }
-
-        /* Hub Cards */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 40px 10%; }
+        /* Grid System */
+        .section-title { text-align: center; color: var(--matrix-green); margin: 50px 0 20px; font-size: 0.8rem; letter-spacing: 5px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 0 10%; }
         .card { 
             background: var(--card-bg); padding: 30px; border: 1px solid var(--border); 
-            border-radius: 12px; text-align: center; transition: 0.3s;
+            border-radius: 4px; text-align: center; cursor: pointer; transition: 0.3s;
         }
-        .card:hover { border-color: var(--matrix-green); transform: translateY(-5px); }
+        .card:hover { border-color: var(--matrix-green); transform: translateY(-5px); box-shadow: 0 0 20px var(--matrix-glow); }
         .card i { font-size: 2rem; color: var(--matrix-green); margin-bottom: 15px; }
 
         /* Session UI */
         .session-container {
-            width: 90%; max-width: 420px; background: var(--card-bg);
-            padding: 40px; border-radius: 20px; border: 1px solid var(--border);
-            margin: 80px auto; text-align: center; position: relative;
+            width: 90%; max-width: 440px; background: #000; padding: 40px; 
+            border: 1px solid var(--matrix-green); margin: 80px auto; text-align: center;
         }
-
-        /* Input Fix */
-        .iti { width: 100%; margin-bottom: 20px; }
+        .iti { width: 100%; margin-bottom: 25px; }
         input[type="tel"] {
             width: 100% !important; background: #000 !important;
-            padding: 18px 18px 18px 85px !important; border: 1px solid #333 !important;
-            border-radius: 10px !important; color: white !important; font-size: 1.1rem;
+            padding: 18px 18px 18px 85px !important; border: 1px solid var(--matrix-green) !important;
+            color: var(--matrix-green) !important; font-family: 'Share Tech Mono';
         }
 
-        /* Hidden Areas - Strictly Hidden */
-        .result-area { display: none; margin-top: 20px; padding: 20px; border: 1px solid var(--matrix-green); border-radius: 10px; }
-        .code-text { color: var(--matrix-green); font-family: monospace; font-size: 1.6rem; font-weight: bold; letter-spacing: 4px; }
+        /* Result Area */
+        .result-area { display: none; margin-top: 25px; border-top: 1px dashed var(--matrix-green); padding-top: 20px; }
+        .code-text { color: var(--matrix-green); font-size: 1.8rem; font-weight: bold; letter-spacing: 5px; }
 
-        /* Music & Footer */
+        /* Guards & Modals */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; }
+        #fork-guard {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 320px; background: #000; border: 2px solid var(--matrix-green); padding: 30px; z-index: 10001; text-align: center;
+        }
+        .guard-input { width: 80%; background: transparent; border: 1px solid var(--matrix-green); color: var(--matrix-green); padding: 10px; text-align: center; margin: 20px 0; }
+
+        /* Floating Controls */
         .music-btn {
-            position: fixed; bottom: 80px; right: 30px; z-index: 1000;
-            background: rgba(0,0,0,0.8); border: 1px solid var(--matrix-green);
-            padding: 10px 20px; border-radius: 50px; cursor: pointer; color: var(--matrix-green);
-            font-family: 'Orbitron'; font-size: 0.7rem;
-        }
-
-        footer {
-            padding: 40px 10%; border-top: 1px solid var(--border);
-            text-align: center; color: #444; font-size: 0.8rem; letter-spacing: 2px;
+            position: fixed; bottom: 30px; left: 30px; z-index: 1000;
+            background: #000; border: 1px solid var(--matrix-green); padding: 10px 20px; color: var(--matrix-green); cursor: pointer;
         }
         
-        button { cursor: pointer; transition: 0.3s; }
-        .btn-main { padding: 15px 40px; background: var(--matrix-green); border: none; font-weight: bold; text-transform: uppercase; }
+        footer { padding: 50px 0; text-align: center; opacity: 0.3; font-size: 0.7rem; letter-spacing: 4px; border-top: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
     <canvas id="matrix-canvas"></canvas>
 
+    <div class="overlay" id="overlay"></div>
+    <div id="fork-guard">
+        <h3 class="logo" style="font-size: 1rem;">FORK_REQUIRED</h3>
+        <p style="font-size: 0.6rem; color: #888; margin-top: 10px;">ENTER GITHUB USERNAME TO VERIFY</p>
+        <input type="text" id="gh-user" class="guard-input" placeholder="USERNAME">
+        <div id="guard-status" style="font-size: 0.6rem; margin-bottom: 15px; min-height: 15px;"></div>
+        <button onclick="verifyFork()" id="verify-btn" style="background: var(--matrix-green); color:#000; border:none; padding:10px 20px; font-weight:bold; cursor:pointer;">VERIFY_FORK</button>
+        <p onclick="closeGuard()" style="margin-top: 15px; font-size: 0.5rem; cursor:pointer;">[ ABORT_PROCESS ]</p>
+    </div>
+
     <div class="view-wrapper">
         <audio id="bg-audio" loop src="https://raw.githubusercontent.com/Vinny256/COMRADES-MD/main/assets/play.mp3"></audio>
-        <div class="music-btn" id="play-pause-btn" onclick="toggleMusic()">PLAY</div>
+        <div class="music-btn" id="play-pause-btn" onclick="toggleMusic()">PLAY_SOUND</div>
 
         <section id="home-view" class="view active">
-            <nav style="padding: 20px 10%; display: flex; justify-content: space-between; align-items: center;">
-                <div class="logo">COMRADES-MD</div>
-                <a href="https://github.com/Vinny256/COMRADES-MD" style="color:white;"><i class="fab fa-github"></i></a>
+            <nav>
+                <div class="logo" style="font-size: 1.5rem;">COMRADES-MD</div>
+                <a href="https://github.com/Vinny256/COMRADES-MD" style="color:var(--matrix-green);"><i class="fab fa-github"></i></a>
             </nav>
 
-            <div style="height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <h1 class="logo" style="font-size: 3.5rem;">COMRADES-MD</h1>
-                <p style="color: #666; margin: 20px 0 40px;">THE ULTIMATE WHATSAPP BOT SYSTEM</p>
-                <button class="btn-main" onclick="startExperience()">GET SESSION <i class="fas fa-terminal"></i></button>
+            <div class="hero">
+                <h1 class="logo" style="font-size: clamp(2rem, 8vw, 4rem);">COMRADES-MD</h1>
+                <p style="color: var(--matrix-green); letter-spacing: 2px;">V_3.0_SYSTEM_ONLINE</p>
+                <button class="btn-main" onclick="startExperience()" style="margin-top: 30px;">GET_SESSION_ID</button>
             </div>
 
+            <div class="section-title">PROJECT_CONTAINERS</div>
             <div class="grid">
-                <div class="card">
+                <div class="card" onclick="window.open('https://github.com/Vinny256/COMRADES-MD', '_blank')">
+                    <i class="fas fa-code"></i>
+                    <h3>SOURCE_CODE</h3>
+                    <p style="font-size: 0.6rem;">MAIN_REPOSITORY</p>
+                </div>
+                <div class="card" onclick="openGuard('https://dashboard.heroku.com/new?template=https://github.com/Vinny256/COMRADES-MD')">
                     <i class="fas fa-server"></i>
                     <h3>HEROKU</h3>
-                    <a href="https://dashboard.heroku.com/new?template=https://github.com/Vinny256/COMRADES-MD" style="color:var(--matrix-green); text-decoration: none;">DEPLOY HUB →</a>
+                    <p style="font-size: 0.6rem;">CLOUD_DEPLOY</p>
                 </div>
-                <div class="card">
+                <div class="card" onclick="openGuard('https://railway.app/new/template?template=https://github.com/Vinny256/COMRADES-MD')">
                     <i class="fas fa-train"></i>
                     <h3>RAILWAY</h3>
-                    <a href="https://railway.app/new/template?template=https://github.com/Vinny256/COMRADES-MD" style="color:var(--matrix-green); text-decoration: none;">DEPLOY HUB →</a>
+                    <p style="font-size: 0.6rem;">EDGE_HOST</p>
                 </div>
-                <div class="card">
-                    <i class="fas fa-cloud-upload-alt"></i>
+                <div class="card" onclick="openGuard('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD')">
+                    <i class="fas fa-cloud"></i>
                     <h3>RENDER</h3>
-                    <a href="https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD" style="color:var(--matrix-green); text-decoration: none;">DEPLOY HUB →</a>
+                    <p style="font-size: 0.6rem;">WEB_HOST</p>
                 </div>
             </div>
 
             <footer>
-                <p>&copy; 2024 COMRADES-MD. POWERED BY VINNY256.</p>
+                <p>COMRADES-MD // POWERED BY VINNY256 // &copy; 2026</p>
             </footer>
         </section>
 
         <section id="session-view" class="view">
             <div class="session-container">
-                <div style="position: absolute; top: 20px; left: 20px; color: #444; cursor: pointer;" onclick="showView('home-view')">← BACK</div>
-                <h2 class="logo" style="margin-bottom: 30px;">SESSION</h2>
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <span onclick="showView('home-view')" style="cursor:pointer; color: var(--matrix-green); font-size: 0.7rem;">[ BACK_TO_MAIN ]</span>
+                </div>
                 
+                <h2 class="logo" style="font-size: 1.2rem; margin-bottom: 30px;">LINK_ACCOUNT</h2>
                 <input type="tel" id="phone">
                 
                 <div style="display: flex; gap: 10px;">
-                    <button onclick="getQRCode()" style="flex:1; padding: 15px; background: #fff; border: none; font-weight: bold;">QR CODE</button>
-                    <button onclick="getPairCode()" style="flex:1; padding: 15px; background: #000; color:#fff; border: 1px solid #333; font-weight: bold;">PAIR CODE</button>
+                    <button onclick="getQRCode()" style="flex:1; padding: 15px; background: var(--matrix-green); color:#000; border:none; font-weight:bold; cursor:pointer;">QR_SCAN</button>
+                    <button onclick="getPairCode()" style="flex:1; padding: 15px; background: transparent; color:var(--matrix-green); border:1px solid var(--matrix-green); font-weight:bold; cursor:pointer;">PAIR_CODE</button>
                 </div>
 
-                <div id="qr-container" style="margin-top: 20px;"></div>
+                <div id="qr-container" style="margin-top: 25px;"></div>
 
                 <div id="pair-area" class="result-area">
-                    <p style="font-size: 0.7rem; color: #555;">YOUR PAIRING CODE:</p>
                     <div id="pair-display" class="code-text"></div>
-                    <button onclick="copy('pair-display')" style="width:100%; margin-top:15px; background:var(--matrix-green); border:none; padding:10px; font-weight:bold;">COPY</button>
+                    <button onclick="copy('pair-display')" style="width:100%; margin-top:15px; background:var(--matrix-green); color:#000; padding:12px; border:none; font-weight:bold;">COPY_HANDSHAKE</button>
                 </div>
             </div>
         </section>
@@ -160,7 +188,7 @@
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
         const fontSize = 16;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
@@ -171,29 +199,28 @@
             ctx.fillStyle = "#0F0";
             ctx.font = fontSize + "px monospace";
             for (let i = 0; i < drops.length; i++) {
-                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                const text = chars[Math.floor(Math.random() * chars.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
                 if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             }
         }
-        setInterval(drawMatrix, 50);
+        setInterval(drawMatrix, 40);
 
-        // --- SPA LOGIC ---
+        // --- NAVIGATION & MUSIC ---
         function showView(viewId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
-            if(viewId === 'session-view') setTimeout(() => document.getElementById('phone').focus(), 150);
         }
 
         const audio = document.getElementById('bg-audio');
         function toggleMusic(force = false) {
             if (audio.paused || force) {
                 audio.play().catch(() => {});
-                document.getElementById('play-pause-btn').innerText = "PAUSE";
+                document.getElementById('play-pause-btn').innerText = "PAUSE_SYSTEM";
             } else {
                 audio.pause();
-                document.getElementById('play-pause-btn').innerText = "PLAY";
+                document.getElementById('play-pause-btn').innerText = "RESUME_SYSTEM";
             }
         }
 
@@ -202,7 +229,47 @@
             showView('session-view');
         }
 
-        // --- BACKEND ---
+        // --- FORK GUARD LOGIC ---
+        let pendingUrl = "";
+        const repoOwner = "Vinny256"; 
+        const repoName = "COMRADES-MD";
+
+        function openGuard(url) {
+            pendingUrl = url;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('fork-guard').style.display = 'block';
+        }
+
+        function closeGuard() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('fork-guard').style.display = 'none';
+        }
+
+        async function verifyFork() {
+            const user = document.getElementById('gh-user').value.trim();
+            const status = document.getElementById('guard-status');
+            if (!user) return status.innerText = "ERR: USERNAME_EMPTY";
+
+            status.innerText = "SCANNING_REPOS...";
+            try {
+                const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/forks`);
+                const forks = await res.json();
+                const isForked = forks.some(f => f.owner.login.toLowerCase() === user.toLowerCase());
+
+                if (isForked) {
+                    status.innerText = "WOW! FORKED. ACCESS_GRANTED.";
+                    setTimeout(() => {
+                        window.open(pendingUrl, '_blank');
+                        closeGuard();
+                    }, 1500);
+                } else {
+                    status.innerText = "FORK_NOT_FOUND. REDIRECTING...";
+                    setTimeout(() => window.open(`https://github.com/${repoOwner}/${repoName}/fork`, '_blank'), 1500);
+                }
+            } catch (e) { status.innerText = "API_LIMIT_REACHED"; }
+        }
+
+        // --- BACKEND LOGIC ---
         const phoneInput = document.querySelector("#phone");
         const iti = window.intlTelInput(phoneInput, {
             separateDialCode: true,
@@ -213,14 +280,14 @@
         const socket = io("https://comrades-session-65daf07fdaad.herokuapp.com");
 
         function getQRCode() {
-            document.getElementById('qr-container').innerHTML = "Generating...";
+            document.getElementById('qr-container').innerHTML = "GENERATING_DATA...";
             document.getElementById('pair-area').style.display = "none";
             fetch(`${socket.io.uri}/start-qr`, { method: 'POST' });
         }
 
         function getPairCode() {
-            const dial = iti.getSelectedCountryData().dialCode;
-            const num = dial + phoneInput.value.replace(/\D/g, '');
+            const num = iti.getNumber().replace(/\D/g, '');
+            if(!num) return alert("ENTER_PHONE_NUMBER");
             document.getElementById('qr-container').innerHTML = "";
             fetch(`${socket.io.uri}/start-pairing`, {
                 method: 'POST',
@@ -230,18 +297,17 @@
         }
 
         socket.on('qr', url => {
-            document.getElementById('qr-container').innerHTML = `<img src="${url}" style="width:200px; border:2px solid #0f0;">`;
+            document.getElementById('qr-container').innerHTML = `<img src="${url}" style="width:200px; border:2px solid #0f0; background:#fff; padding:10px;">`;
         });
 
         socket.on('pairing-code', code => {
-            const area = document.getElementById('pair-area');
-            area.style.display = "block"; // Only shows when code is received
+            document.getElementById('pair-area').style.display = "block";
             document.getElementById('pair-display').innerText = code;
         });
 
         function copy(id) {
             navigator.clipboard.writeText(document.getElementById(id).innerText);
-            alert("COPIED");
+            alert("DATA_STORED_IN_CLIPBOARD");
         }
     </script>
 </body>
