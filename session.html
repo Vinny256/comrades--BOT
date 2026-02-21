@@ -17,16 +17,23 @@
             --success: #10b981;
         }
 
-        body {
+        /* 1. Remove Scrollbars while allowing scrolling */
+        html, body {
             margin: 0;
             background: var(--bg);
             color: white;
             font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        body::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
         }
 
         #particles-js {
@@ -46,6 +53,7 @@
             text-align: center;
             box-shadow: 0 0 40px rgba(255,255,255,0.02);
             position: relative;
+            margin: 20px 0;
         }
 
         .back-btn {
@@ -69,23 +77,21 @@
             margin-top: 15px;
         }
 
-        /* Phone Input Overrides for Modern Black Theme */
+        /* 2. Fix Overlap: Increased padding-left to 85px */
         .iti { width: 100%; margin-bottom: 25px; text-align: left; }
         .iti__country-list { background-color: #0a0a0a; border: 1px solid #333; color: white; width: 300px; }
-        .iti__country:hover { background-color: #1a1a1a; }
         .iti__selected-flag { background-color: #050505; border-radius: 12px 0 0 12px; border-right: 1px solid #222; }
         
         input {
             width: 100% !important;
             background: #050505 !important;
             border: 1px solid #222 !important;
-            padding: 18px 18px 18px 52px !important;
+            padding: 18px 18px 18px 85px !important; /* Fixed padding */
             border-radius: 12px !important;
             color: white !important;
             outline: none;
             transition: 0.3s;
             font-size: 1.1rem;
-            font-family: 'Inter', sans-serif;
         }
         input:focus { border-color: #ffffff !important; }
 
@@ -103,7 +109,7 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
         }
         button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
         .btn-pair { background: #000; color: #fff; border: 1px solid #222; }
@@ -116,14 +122,15 @@
             letter-spacing: 2px;
         }
 
+        /* 3. Strict display:none until triggered */
         .result-area {
-            display: none;
+            display: none; 
             background: rgba(255,255,255,0.03);
             padding: 25px;
             border-radius: 16px;
             margin-top: 25px;
             border: 1px solid #1a1a1a;
-            animation: fadeInScale 0.4s ease;
+            animation: fadeInScale 0.4s ease forwards;
         }
 
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
@@ -132,12 +139,13 @@
             word-break: break-all;
             color: var(--success);
             font-family: monospace;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             margin: 20px 0;
-            letter-spacing: 1px;
+            letter-spacing: 3px;
             background: #000;
             padding: 15px;
             border-radius: 8px;
+            font-weight: bold;
         }
 
         #qr-container img {
@@ -196,7 +204,6 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
     <script>
-        // Initialize Background
         particlesJS("particles-js", {
             "particles": {
                 "number": { "value": 60 },
@@ -206,7 +213,6 @@
             }
         });
 
-        // Initialize International Flags (All Countries)
         const phoneInput = document.querySelector("#phone");
         const iti = window.intlTelInput(phoneInput, {
             separateDialCode: true,
@@ -217,10 +223,21 @@
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
         });
 
-        // Backend URL Logic
+        // 4. AUTO-FOCUS Feature
+        window.onload = () => {
+            phoneInput.focus();
+        };
+
         const socket = io("https://comrades-session-65daf07fdaad.herokuapp.com");
 
+        function resetUI() {
+            document.getElementById('qr-container').innerHTML = "";
+            document.getElementById('pair-area').style.display = "none";
+            document.getElementById('session-area').style.display = "none";
+        }
+
         function getQRCode() {
+            resetUI();
             document.getElementById('status-terminal').innerText = "> FETCHING_QR_DATA...";
             fetch(`${socket.io.uri}/start-qr`, { method: 'POST' });
         }
@@ -228,17 +245,13 @@
         function getPairCode() {
             const rawValue = phoneInput.value.trim();
             if(!rawValue) return alert("Enter your number first.");
-
+            
+            resetUI();
             document.getElementById('status-terminal').innerText = "> INITIATING_PAIRING...";
             
-            // Smart Sanitization Logic
             const dialCode = iti.getSelectedCountryData().dialCode;
-            let cleanNumber = rawValue;
-            
-            // If user types local '0' (like 07xx), remove it
-            if (cleanNumber.startsWith('0')) {
-                cleanNumber = cleanNumber.substring(1);
-            }
+            let cleanNumber = rawValue.replace(/\D/g, ''); // Remove any non-digits
+            if (cleanNumber.startsWith('0')) cleanNumber = cleanNumber.substring(1);
             
             const finalNumber = dialCode + cleanNumber;
 
@@ -257,26 +270,24 @@
             setTimeout(() => t.className = "", 3000);
         }
 
-        // Socket Events
         socket.on('qr', url => {
             document.getElementById('status-terminal').innerText = "> QR_READY_FOR_SCAN";
             document.getElementById('qr-container').innerHTML = `<img src="${url}">`;
-            document.getElementById('pair-area').style.display = "none";
         });
 
         socket.on('pairing-code', code => {
             document.getElementById('status-terminal').innerText = "> HANDSHAKE_SUCCESS";
-            document.getElementById('pair-area').style.display = "block";
+            const pairArea = document.getElementById('pair-area');
+            pairArea.style.display = "block";
             document.getElementById('pair-display').innerText = code;
-            document.getElementById('qr-container').innerHTML = "";
         });
 
         socket.on('session-ready', id => {
             document.getElementById('status-terminal').innerText = "> SESSION_LOCKED";
-            document.getElementById('session-area').style.display = "block";
+            const sessArea = document.getElementById('session-area');
+            sessArea.style.display = "block";
             document.getElementById('session-display').innerText = id;
             document.getElementById('pair-area').style.display = "none";
-            document.getElementById('qr-container').innerHTML = "";
         });
     </script>
 </body>
