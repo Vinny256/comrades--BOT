@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMRADES-MD | Unified Hub</title>
+    <title>COMRADES-MD | The Future</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
@@ -11,14 +11,14 @@
     <style>
         :root {
             --bg: #050505;
-            --card-bg: rgba(10, 10, 10, 0.95);
+            --card-bg: rgba(10, 10, 10, 0.8);
             --accent: #ffffff;
             --border: rgba(255, 255, 255, 0.1);
             --text-secondary: #888888;
             --success: #10b981;
         }
 
-        /* Prevent Scrollbars */
+        /* Essential Reset & Scrollbar Removal */
         html, body {
             margin: 0;
             background-color: var(--bg);
@@ -35,9 +35,10 @@
             z-index: -1;
         }
 
-        /* View Management */
-        .view { display: none; min-height: 100vh; width: 100%; }
-        .view.active { display: block; }
+        /* View Control */
+        .view { display: none; min-height: 100vh; }
+        .view.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* Navbar */
         nav {
@@ -51,32 +52,28 @@
         }
         .logo { font-family: 'Orbitron'; font-weight: 700; letter-spacing: 3px; }
 
-        /* Music Controls */
-        .music-controller {
+        /* Music Button (The Home Pause/Play Button) */
+        .music-btn {
             position: fixed;
             bottom: 30px;
-            left: 30px;
+            right: 30px;
             z-index: 1001;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .music-btn {
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
-            padding: 8px 15px;
+            padding: 10px 25px;
             border-radius: 50px;
             cursor: pointer;
             font-family: 'Orbitron';
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             letter-spacing: 2px;
             transition: 0.3s;
+            backdrop-filter: blur(10px);
         }
-        .music-btn:hover { background: #fff; color: #000; }
+        .music-btn:hover { background: #fff; color: #000; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
 
         /* Hero Section */
         .hero {
-            height: 80vh;
+            height: 70vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -84,41 +81,52 @@
             text-align: center;
             padding: 0 10%;
         }
-        .hero h1 { font-family: 'Orbitron'; font-size: clamp(2rem, 8vw, 4rem); margin-bottom: 20px; }
-        
+        .hero h1 { font-family: 'Orbitron'; font-size: clamp(2rem, 8vw, 4.5rem); line-height: 1.1; margin: 0; }
+        .hero p { color: var(--text-secondary); max-width: 600px; margin: 25px 0 40px; }
+
         .btn-main {
-            padding: 18px 40px;
+            padding: 18px 45px;
             background: var(--accent);
             color: black;
             text-decoration: none;
             font-weight: 700;
-            border-radius: 5px;
-            transition: 0.3s;
+            border-radius: 2px;
             text-transform: uppercase;
+            letter-spacing: 2px;
             cursor: pointer;
             border: none;
+            transition: 0.3s;
         }
+        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
 
-        /* Session Container Style */
-        .session-flex {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 90vh;
-        }
-        .session-container {
-            width: 90%;
-            max-width: 420px;
+        /* Deployment Hub */
+        .deploy-hub { padding: 80px 10%; text-align: center; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .glass-card {
             background: var(--card-bg);
-            padding: 35px;
-            border-radius: 24px;
+            padding: 40px;
             border: 1px solid var(--border);
-            text-align: center;
-            position: relative;
+            border-radius: 16px;
+            transition: 0.4s;
         }
+        .glass-card:hover { border-color: #fff; transform: translateY(-5px); }
+        .glass-card i { font-size: 2rem; margin-bottom: 20px; display: block; }
+        .deploy-link { display: inline-block; margin-top: 15px; color: #fff; font-weight: bold; text-decoration: none; font-size: 0.8rem; border-bottom: 1px solid #fff; }
 
-        /* Fix Overlap */
-        .iti { width: 100%; margin-bottom: 20px; }
+        /* Session View */
+        .session-flex { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .session-container {
+            width: 90%; max-width: 420px;
+            background: var(--card-bg);
+            padding: 40px; border-radius: 24px;
+            border: 1px solid var(--border);
+            text-align: center; position: relative;
+            backdrop-filter: blur(20px);
+        }
+        .back-link { position: absolute; top: 25px; left: 25px; color: #555; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
+        
+        /* Input & Overlap Fix */
+        .iti { width: 100%; margin-bottom: 25px; }
         input[type="tel"] {
             width: 100% !important;
             background: #000 !important;
@@ -129,42 +137,53 @@
             font-size: 1.1rem;
         }
 
-        .result-area {
-            display: none;
-            margin-top: 20px;
-            background: #000;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-        .code-text { color: var(--success); font-family: monospace; font-size: 1.3rem; margin: 15px 0; }
-
-        .back-link {
-            position: absolute; top: 20px; left: 20px;
-            color: #555; cursor: pointer; font-size: 0.8rem;
-        }
+        .result-area { display: none; margin-top: 20px; background: #000; padding: 25px; border-radius: 16px; border: 1px solid var(--border); }
+        .code-text { color: var(--success); font-family: monospace; font-size: 1.4rem; font-weight: bold; margin: 15px 0; letter-spacing: 2px; }
+        
+        #qr-container img { width: 220px; border: 5px solid #fff; border-radius: 10px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div id="particles-js"></div>
-    <audio id="bg-audio" loop></audio>
+    <audio id="bg-audio" loop src="PASTE_YOUR_GITHUB_SONG_URL_HERE.mp3"></audio>
 
-    <div class="music-controller">
-        <div class="music-btn" id="play-pause-btn" onclick="toggleMusic()">PLAY</div>
-        <input type="file" id="music-upload" accept="audio/*" style="display: none;" onchange="loadMusic(this)">
-        <div class="music-btn" onclick="document.getElementById('music-upload').click()">UPLOAD SONG</div>
-    </div>
+    <div class="music-btn" id="play-pause-btn" onclick="toggleMusic()">PLAY</div>
 
     <section id="home-view" class="view active">
         <nav>
             <div class="logo">COMRADES-MD</div>
-            <a href="#" style="color:white;"><i class="fab fa-github"></i></a>
+            <a href="https://github.com" style="color:white;"><i class="fab fa-github"></i></a>
         </nav>
+
         <div class="hero">
             <h1>POWER. SPEED.<br>SIMPLICITY.</h1>
-            <p style="color: #888; margin-bottom: 40px;">The next generation of WhatsApp automation.</p>
-            <button class="btn-main" onclick="showView('session-view')">Get Started <i class="fas fa-arrow-right"></i></button>
+            <p>The most advanced WhatsApp multi-device bot designed for automation and seamless performance.</p>
+            <button class="btn-main" onclick="startExperience()">Get Started <i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <div class="deploy-hub">
+            <h2 style="font-family: 'Orbitron'; margin-bottom: 40px; letter-spacing: 2px;">DEPLOYMENT HUB</h2>
+            <div class="grid-container">
+                <div class="glass-card">
+                    <i class="fas fa-server"></i>
+                    <h3>Heroku</h3>
+                    <p>Standard cloud hosting.</p>
+                    <a href="#" class="deploy-link">DEPLOY NOW</a>
+                </div>
+                <div class="glass-card">
+                    <i class="fas fa-train"></i>
+                    <h3>Railway</h3>
+                    <p>Fast modern deployment.</p>
+                    <a href="#" class="deploy-link">DEPLOY NOW</a>
+                </div>
+                <div class="glass-card">
+                    <i class="fas fa-cloud"></i>
+                    <h3>Render</h3>
+                    <p>Free tier hosting.</p>
+                    <a href="#" class="deploy-link">DEPLOY NOW</a>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -172,26 +191,26 @@
         <div class="session-flex">
             <div class="session-container">
                 <div class="back-link" onclick="showView('home-view')"><i class="fas fa-chevron-left"></i> BACK</div>
-                <div class="logo-sm" style="font-family: 'Orbitron'; margin-top: 20px; margin-bottom: 20px;">COMRADES-MD</div>
-                <div id="status-terminal" style="font-size: 0.7rem; color: #444; margin-bottom: 10px;">> SYSTEM_READY</div>
+                <div class="logo-sm" style="font-family: 'Orbitron'; letter-spacing: 3px; margin: 20px 0;">COMRADES-MD</div>
+                <div id="status-terminal" style="font-size: 0.6rem; color: #444; margin-bottom: 15px; letter-spacing: 2px;">> SYSTEM_STANDBY</div>
                 
                 <input type="tel" id="phone">
                 
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="getQRCode()" style="flex:1; padding: 15px; border-radius: 10px; cursor: pointer;">QR SCAN</button>
-                    <button onclick="getPairCode()" style="flex:1; padding: 15px; border-radius: 10px; background: #000; color:#fff; border: 1px solid #333; cursor: pointer;">PAIRING</button>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="getQRCode()" style="flex:1; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer;">QR SCAN</button>
+                    <button onclick="getPairCode()" style="flex:1; padding: 15px; border-radius: 12px; background: #000; color:#fff; border: 1px solid #333; font-weight: bold; cursor: pointer;">PAIRING</button>
                 </div>
 
                 <div id="qr-container" style="margin-top: 20px;"></div>
 
                 <div id="pair-area" class="result-area">
                     <div id="pair-display" class="code-text"></div>
-                    <button onclick="copy('pair-display')" style="width: 100%; background: var(--success); color: #fff; padding: 10px; border:none; border-radius: 8px;">COPY CODE</button>
+                    <button onclick="copy('pair-display')" style="width: 100%; background: var(--success); color: #fff; padding: 12px; border:none; border-radius: 8px; font-weight: bold; cursor: pointer;">COPY CODE</button>
                 </div>
 
                 <div id="session-area" class="result-area">
                     <div id="session-display" class="code-text" style="font-size: 0.8rem;"></div>
-                    <button onclick="copy('session-display')" style="width: 100%; background: var(--success); color: #fff; padding: 10px; border:none; border-radius: 8px;">COPY SESSION</button>
+                    <button onclick="copy('session-display')" style="width: 100%; background: var(--success); color: #fff; padding: 12px; border:none; border-radius: 8px; font-weight: bold; cursor: pointer;">COPY SESSION</button>
                 </div>
             </div>
         </div>
@@ -202,44 +221,38 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
     <script>
-        // 1. Particle Background
+        // 1. RE-ESTABLISH SHINING BACKGROUND
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 80 },
+                "number": { "value": 100, "density": { "enable": true, "value_area": 800 } },
                 "color": { "value": "#ffffff" },
-                "opacity": { "value": 0.2 },
-                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1 },
-                "move": { "enable": true, "speed": 1 }
+                "opacity": { "value": 0.3, "random": true },
+                "size": { "value": 2 },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1, "width": 1 },
+                "move": { "enable": true, "speed": 1.5 }
             }
         });
 
-        // 2. View Switcher Logic
+        // 2. VIEW CONTROLLER
         function showView(viewId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
-            
-            // Auto-focus if entering session
-            if(viewId === 'session-view') {
-                setTimeout(() => document.getElementById('phone').focus(), 100);
-            }
+            window.scrollTo(0, 0);
+            if(viewId === 'session-view') setTimeout(() => document.getElementById('phone').focus(), 150);
         }
 
-        // 3. Music Logic
+        function startExperience() {
+            toggleMusic(true); // Auto-play music on click
+            showView('session-view');
+        }
+
+        // 3. FIXED MUSIC LOGIC
         const audio = document.getElementById('bg-audio');
         const playBtn = document.getElementById('play-pause-btn');
 
-        function loadMusic(input) {
-            if (input.files && input.files[0]) {
-                const url = URL.createObjectURL(input.files[0]);
-                audio.src = url;
-                audio.play();
-                playBtn.innerText = "PAUSE";
-            }
-        }
-
-        function toggleMusic() {
-            if (audio.paused) {
-                audio.play();
+        function toggleMusic(forcePlay = false) {
+            if (audio.paused || forcePlay) {
+                audio.play().catch(e => console.log("User interaction required"));
                 playBtn.innerText = "PAUSE";
             } else {
                 audio.pause();
@@ -247,7 +260,7 @@
             }
         }
 
-        // 4. Session Logic
+        // 4. SESSION & QR LOGIC (FIXED)
         const phoneInput = document.querySelector("#phone");
         const iti = window.intlTelInput(phoneInput, {
             separateDialCode: true,
@@ -257,29 +270,54 @@
 
         const socket = io("https://comrades-session-65daf07fdaad.herokuapp.com");
 
+        function getQRCode() {
+            document.getElementById('status-terminal').innerText = "> FETCHING_QR_DATA...";
+            document.getElementById('qr-container').innerHTML = "";
+            document.getElementById('pair-area').style.display = "none";
+            fetch(`${socket.io.uri}/start-qr`, { method: 'POST' });
+        }
+
         function getPairCode() {
             const val = phoneInput.value.trim();
-            if(!val) return;
+            if(!val) return alert("Enter number first");
+            
+            document.getElementById('status-terminal').innerText = "> REQUESTING_PAIR_CODE...";
+            document.getElementById('qr-container').innerHTML = "";
+            
             const dial = iti.getSelectedCountryData().dialCode;
             let num = val.startsWith('0') ? val.substring(1) : val;
-            const final = dial + num.replace(/\D/g, '');
-            
-            document.getElementById('status-terminal').innerText = "> REQUESTING_CODE...";
+            const finalNum = dial + num.replace(/\D/g, '');
+
             fetch(`${socket.io.uri}/start-pairing`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phoneNumber: final })
+                body: JSON.stringify({ phoneNumber: finalNum })
             });
         }
 
+        function copy(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            alert("Copied to clipboard!");
+        }
+
+        // Socket Event Listeners
+        socket.on('qr', url => {
+            document.getElementById('status-terminal').innerText = "> SCAN_QR_CODE";
+            document.getElementById('qr-container').innerHTML = `<img src="${url}">`;
+        });
+
         socket.on('pairing-code', code => {
+            document.getElementById('status-terminal').innerText = "> CODE_GENERATED";
             document.getElementById('pair-area').style.display = "block";
             document.getElementById('pair-display').innerText = code;
         });
 
         socket.on('session-ready', id => {
+            document.getElementById('status-terminal').innerText = "> SESSION_SECURED";
             document.getElementById('session-area').style.display = "block";
             document.getElementById('session-display').innerText = id;
+            document.getElementById('pair-area').style.display = "none";
         });
     </script>
 </body>
