@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Generator | COMRADES-MD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .session-container {
+            width: 90%;
+            max-width: 400px;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .logo-sm { font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 30px; letter-spacing: 3px; }
+
+        input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #222;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: #555; }
+
+        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        #status-terminal {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #555;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .result-area {
+            display: none;
+            background: #111;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px solid #333;
+        }
+
+        .code-text {
+            word-break: break-all;
+            color: #10b981;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+
+        #qr-container img {
+            width: 200px;
+            border: 1px solid #333;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="session-container">
+        <div class="logo-sm">COMRADES-MD</div>
+        <div id="status-terminal">> SYSTEM IDLE</div>
+        
+        <input type="text" id="phone" placeholder="Enter number (e.g. 254...)">
+        
+        <div class="btn-group">
+            <button onclick="getQRCode()">QR SCAN</button>
+            <button onclick="getPairCode()" style="background: #111; color: white; border: 1px solid #333;">PAIRING</button>
+        </div>
+
+        <div id="qr-container"></div>
+
+        <div id="pair-area" class="result-area">
+            <div id="pair-display" class="code-text"></div>
+            <button onclick="copy('pair-display')">COPY CODE</button>
+        </div>
+
+        <div id="session-area" class="result-area">
+            <div style="font-size: 0.7rem; color: #888;">SUCCESS! COPY SESSION BELOW</div>
+            <div id="session-display" class="code-text"></div>
+            <button onclick="copy('session-display')">COPY SESSION</button>
+        </div>
+    </div>
+
+    </body>
+</html>
