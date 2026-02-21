@@ -3,61 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMRADES-MD | Obsidian Edition</title>
+    <title>COMRADES-MD | Unified Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+    
     <style>
         :root {
             --bg: #050505;
-            --card-bg: rgba(15, 15, 15, 0.8);
+            --card-bg: rgba(10, 10, 10, 0.95);
             --accent: #ffffff;
             --border: rgba(255, 255, 255, 0.1);
             --text-secondary: #888888;
-            --glow: rgba(255, 255, 255, 0.05);
+            --success: #10b981;
         }
 
-        body {
+        /* Prevent Scrollbars */
+        html, body {
             margin: 0;
-            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: white;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
+            scrollbar-width: none;
         }
+        body::-webkit-scrollbar { display: none; }
 
-        /* Interactive Particle Background */
         #particles-js {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
         }
 
-        /* Glass Navbar */
+        /* View Management */
+        .view { display: none; min-height: 100vh; width: 100%; }
+        .view.active { display: block; }
+
+        /* Navbar */
         nav {
             padding: 20px 10%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
             backdrop-filter: blur(15px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid var(--border);
         }
+        .logo { font-family: 'Orbitron'; font-weight: 700; letter-spacing: 3px; }
 
-        .logo { 
-            font-family: 'Orbitron'; 
-            font-weight: 700; 
-            letter-spacing: 4px; 
-            font-size: 1.2rem;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        /* Music Controls */
+        .music-controller {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
+        .music-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Orbitron';
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+        .music-btn:hover { background: #fff; color: #000; }
 
         /* Hero Section */
         .hero {
-            height: 85vh;
+            height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -65,191 +84,202 @@
             text-align: center;
             padding: 0 10%;
         }
-
-        .hero h1 {
-            font-family: 'Orbitron';
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            margin: 0;
-            line-height: 1.1;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .hero p {
-            color: var(--text-secondary);
-            max-width: 600px;
-            font-size: 1.1rem;
-            margin: 30px 0 40px 0;
-            letter-spacing: 1px;
-        }
-
+        .hero h1 { font-family: 'Orbitron'; font-size: clamp(2rem, 8vw, 4rem); margin-bottom: 20px; }
+        
         .btn-main {
-            padding: 18px 45px;
+            padding: 18px 40px;
             background: var(--accent);
             color: black;
             text-decoration: none;
             font-weight: 700;
-            border-radius: 2px; /* Sharp modern look */
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-main:hover { 
-            transform: scale(1.1); 
-            box-shadow: 0 0 40px rgba(255,255,255,0.4);
-            letter-spacing: 4px;
-        }
-
-        /* Dynamic Deployment Container (New Section) */
-        .deploy-hub {
-            padding: 60px 10%;
-            text-align: center;
-        }
-
-        .section-title {
-            font-family: 'Orbitron';
-            font-size: 1.5rem;
-            margin-bottom: 40px;
-            color: var(--accent);
-            letter-spacing: 3px;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            transition: 0.5s;
-        }
-
-        .glass-card:hover::before { left: 100%; }
-
-        .glass-card:hover {
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
-        .glass-card i { font-size: 2.5rem; margin-bottom: 25px; color: var(--accent); }
-        
-        .deploy-btn {
-            margin-top: 20px;
-            display: inline-block;
-            padding: 10px 20px;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: bold;
-            border-radius: 4px;
+            border-radius: 5px;
             transition: 0.3s;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
         }
 
-        .deploy-btn:hover {
-            background: var(--accent);
-            color: #000;
+        /* Session Container Style */
+        .session-flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
         }
-
-        footer {
-            padding: 60px;
+        .session-container {
+            width: 90%;
+            max-width: 420px;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
             text-align: center;
-            border-top: 1px solid var(--border);
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            letter-spacing: 1px;
+            position: relative;
+        }
+
+        /* Fix Overlap */
+        .iti { width: 100%; margin-bottom: 20px; }
+        input[type="tel"] {
+            width: 100% !important;
+            background: #000 !important;
+            padding: 18px 18px 18px 85px !important;
+            border: 1px solid #222 !important;
+            border-radius: 12px !important;
+            color: white !important;
+            font-size: 1.1rem;
+        }
+
+        .result-area {
+            display: none;
+            margin-top: 20px;
+            background: #000;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .code-text { color: var(--success); font-family: monospace; font-size: 1.3rem; margin: 15px 0; }
+
+        .back-link {
+            position: absolute; top: 20px; left: 20px;
+            color: #555; cursor: pointer; font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
 
     <div id="particles-js"></div>
+    <audio id="bg-audio" loop></audio>
 
-    <nav>
-        <div class="logo">COMRADES-MD</div>
-        <div class="nav-links">
-            <a href="https://github.com/your-repo" style="color:white; font-size: 1.5rem;"><i class="fab fa-github"></i></a>
-        </div>
-    </nav>
+    <div class="music-controller">
+        <div class="music-btn" id="play-pause-btn" onclick="toggleMusic()">PLAY</div>
+        <input type="file" id="music-upload" accept="audio/*" style="display: none;" onchange="loadMusic(this)">
+        <div class="music-btn" onclick="document.getElementById('music-upload').click()">UPLOAD SONG</div>
+    </div>
 
-    <section class="hero">
-        <h1>BEYOND <br> AUTOMATION.</h1>
-        <p>Experience the next generation of WhatsApp MD Bots. Minimalist design, maximalist power.</p>
-        <a href="session.html" class="btn-main">Get Session</a>
-    </section>
-
-    <section class="deploy-hub">
-        <h2 class="section-title">DEPLOYMENT HUB</h2>
-        <div class="grid-container">
-            <div class="glass-card">
-                <i class="fas fa-server"></i>
-                <h3>Heroku</h3>
-                <p>Deploy to Heroku's cloud platform for stable 24/7 uptime.</p>
-                <a href="#" class="deploy-btn">DEPLOY NOW</a>
-            </div>
-
-            <div class="glass-card">
-                <i class="fas fa-train"></i>
-                <h3>Railway</h3>
-                <p>Modern infrastructure with easy GitHub integration.</p>
-                <a href="#" class="deploy-btn">DEPLOY NOW</a>
-            </div>
-
-            <div class="glass-card">
-                <i class="fas fa-cloud"></i>
-                <h3>Render</h3>
-                <p>The fastest way to host your Node.js bot applications.</p>
-                <a href="#" class="deploy-btn">DEPLOY NOW</a>
-            </div>
+    <section id="home-view" class="view active">
+        <nav>
+            <div class="logo">COMRADES-MD</div>
+            <a href="#" style="color:white;"><i class="fab fa-github"></i></a>
+        </nav>
+        <div class="hero">
+            <h1>POWER. SPEED.<br>SIMPLICITY.</h1>
+            <p style="color: #888; margin-bottom: 40px;">The next generation of WhatsApp automation.</p>
+            <button class="btn-main" onclick="showView('session-view')">Get Started <i class="fas fa-arrow-right"></i></button>
         </div>
     </section>
 
-    <footer>
-        &copy; 2026 COMRADES-MD | CREATED BY VINNIE HUB
-    </footer>
+    <section id="session-view" class="view">
+        <div class="session-flex">
+            <div class="session-container">
+                <div class="back-link" onclick="showView('home-view')"><i class="fas fa-chevron-left"></i> BACK</div>
+                <div class="logo-sm" style="font-family: 'Orbitron'; margin-top: 20px; margin-bottom: 20px;">COMRADES-MD</div>
+                <div id="status-terminal" style="font-size: 0.7rem; color: #444; margin-bottom: 10px;">> SYSTEM_READY</div>
+                
+                <input type="tel" id="phone">
+                
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="getQRCode()" style="flex:1; padding: 15px; border-radius: 10px; cursor: pointer;">QR SCAN</button>
+                    <button onclick="getPairCode()" style="flex:1; padding: 15px; border-radius: 10px; background: #000; color:#fff; border: 1px solid #333; cursor: pointer;">PAIRING</button>
+                </div>
+
+                <div id="qr-container" style="margin-top: 20px;"></div>
+
+                <div id="pair-area" class="result-area">
+                    <div id="pair-display" class="code-text"></div>
+                    <button onclick="copy('pair-display')" style="width: 100%; background: var(--success); color: #fff; padding: 10px; border:none; border-radius: 8px;">COPY CODE</button>
+                </div>
+
+                <div id="session-area" class="result-area">
+                    <div id="session-display" class="code-text" style="font-size: 0.8rem;"></div>
+                    <button onclick="copy('session-display')" style="width: 100%; background: var(--success); color: #fff; padding: 10px; border:none; border-radius: 8px;">COPY SESSION</button>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
     <script>
+        // 1. Particle Background
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 120, "density": { "enable": true, "value_area": 800 } },
+                "number": { "value": 80 },
                 "color": { "value": "#ffffff" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.3, "random": true },
-                "size": { "value": 2, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1, "width": 1 },
-                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
-                "modes": { "grab": { "distance": 200, "line_linked": { "opacity": 0.4 } } }
-            },
-            "retina_detect": true
+                "opacity": { "value": 0.2 },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1 },
+                "move": { "enable": true, "speed": 1 }
+            }
+        });
+
+        // 2. View Switcher Logic
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            // Auto-focus if entering session
+            if(viewId === 'session-view') {
+                setTimeout(() => document.getElementById('phone').focus(), 100);
+            }
+        }
+
+        // 3. Music Logic
+        const audio = document.getElementById('bg-audio');
+        const playBtn = document.getElementById('play-pause-btn');
+
+        function loadMusic(input) {
+            if (input.files && input.files[0]) {
+                const url = URL.createObjectURL(input.files[0]);
+                audio.src = url;
+                audio.play();
+                playBtn.innerText = "PAUSE";
+            }
+        }
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = "PAUSE";
+            } else {
+                audio.pause();
+                playBtn.innerText = "PLAY";
+            }
+        }
+
+        // 4. Session Logic
+        const phoneInput = document.querySelector("#phone");
+        const iti = window.intlTelInput(phoneInput, {
+            separateDialCode: true,
+            initialCountry: "ke",
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+        });
+
+        const socket = io("https://comrades-session-65daf07fdaad.herokuapp.com");
+
+        function getPairCode() {
+            const val = phoneInput.value.trim();
+            if(!val) return;
+            const dial = iti.getSelectedCountryData().dialCode;
+            let num = val.startsWith('0') ? val.substring(1) : val;
+            const final = dial + num.replace(/\D/g, '');
+            
+            document.getElementById('status-terminal').innerText = "> REQUESTING_CODE...";
+            fetch(`${socket.io.uri}/start-pairing`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phoneNumber: final })
+            });
+        }
+
+        socket.on('pairing-code', code => {
+            document.getElementById('pair-area').style.display = "block";
+            document.getElementById('pair-display').innerText = code;
+        });
+
+        socket.on('session-ready', id => {
+            document.getElementById('session-area').style.display = "block";
+            document.getElementById('session-display').innerText = id;
         });
     </script>
 </body>
