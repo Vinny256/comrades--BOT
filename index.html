@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMRADES-MD | Silent Terminal</title>
+    <title>COMRADES-MD | Absolute Terminal</title>
     
     <link rel="icon" type="image/png" href="https://img.icons8.com/matrix/50/00ff41/matrix-desktop.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,106 +12,147 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     
     <style>
-        :root { --matrix: #00ff41; --bg: #000; }
+        :root { --matrix: #00ff41; --bg: #000; --glow: rgba(0, 255, 65, 0.3); }
         * { box-sizing: border-box; }
-        body { 
-            margin: 0; background: var(--bg); color: #fff; 
-            font-family: 'Share Tech Mono', monospace; overflow: hidden; 
-        }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Share Tech Mono', monospace; overflow-x: hidden; }
         
-        /* CRT Effect */
+        /* CRT Overlay */
         body::after {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            z-index: 100; pointer-events: none; background-size: 100% 2px, 3px 100%;
+            z-index: 1000; pointer-events: none; background-size: 100% 2px, 3px 100%;
         }
 
         #canvas { position: fixed; top:0; left:0; opacity: 0.15; z-index: 1; }
-        .ui { position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .wrapper { position: relative; z-index: 10; width: 100%; }
+        .view { display: none; min-height: 100vh; padding: 40px 10%; }
+        .view.active { display: block; }
 
+        .logo-text { font-family: 'Orbitron'; letter-spacing: 8px; text-shadow: 0 0 15px var(--matrix); text-align: center; color: var(--matrix); }
+        
+        /* Deployment & Source Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin: 40px 0; }
+        .card { 
+            border: 1px solid rgba(0,255,65,0.2); padding: 30px; text-align: center; 
+            cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.9);
+        }
+        .card:hover { border-color: var(--matrix); box-shadow: 0 0 20px var(--glow); transform: translateY(-5px); }
+        .card i { font-size: 2rem; color: var(--matrix); margin-bottom: 15px; }
+
+        /* Terminal Main */
         .terminal {
-            width: 90%; max-width: 550px; border: 1px solid var(--matrix);
-            background: rgba(0,0,0,0.9); padding: 30px; box-shadow: 0 0 20px rgba(0,255,65,0.2);
+            max-width: 550px; margin: 40px auto; background: #000; border: 1px solid var(--matrix);
+            padding: 30px; box-shadow: 0 0 30px var(--glow);
         }
 
-        .path { color: #555; font-size: 0.7rem; margin-bottom: 20px; text-transform: uppercase; }
-        
-        /* Input Styling */
         .iti { width: 100%; margin-bottom: 20px; }
         input[type="tel"] {
             width: 100% !important; background: transparent !important; border: 1px solid var(--matrix) !important;
             color: var(--matrix) !important; padding: 15px 15px 15px 85px !important; font-family: 'Share Tech Mono';
         }
 
-        .btn-group { display: flex; gap: 10px; margin-bottom: 25px; }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
         .btn { 
             flex: 1; padding: 15px; border: 1px solid var(--matrix); background: transparent; 
             color: var(--matrix); cursor: pointer; font-family: 'Share Tech Mono'; font-weight: bold;
-            transition: 0.2s;
         }
-        .btn:hover { background: var(--matrix); color: #000; }
+        .btn-fill { background: var(--matrix); color: #000; }
 
-        /* Stagnant Result Display */
-        #display-master { 
-            min-height: 100px; border-top: 1px solid #222; margin-top: 10px; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        /* Output Zones */
+        #master-display { min-height: 120px; border-top: 1px solid #222; margin-top: 20px; display: flex; align-items: center; justify-content: center; }
+        .stagnant-box { display: none; width: 100%; text-align: center; padding: 20px 0; }
+        .session-id-box { 
+            display: none; border: 2px solid var(--matrix); padding: 25px; background: #001a00;
+            width: 100%; margin-top: 20px; animation: glowPulse 2s infinite;
+        }
+        @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 5px var(--matrix); } 50% { box-shadow: 0 0 20px var(--matrix); } }
+
+        /* Guard Modal */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; }
+        .modal { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            border: 1px solid var(--matrix); background: #000; padding: 40px; z-index: 5001; 
+            text-align: center; width: 320px; box-shadow: 0 0 40px var(--matrix);
         }
 
-        /* Specific containers that only show on success */
-        .result-box { display: none; width: 100%; padding: 20px; text-align: center; }
-        .code-text { font-size: 2.8rem; color: var(--matrix); letter-spacing: 10px; font-weight: bold; margin: 15px 0; text-shadow: 0 0 10px var(--matrix); }
-        
-        .session-box { 
-            display: none; border: 2px solid var(--matrix); padding: 20px; background: #001a00;
-            width: 100%; margin-top: 20px; text-align: left;
-        }
-        
-        .copy-btn { width: 100%; background: var(--matrix); color: #000; border: none; padding: 10px; font-weight: bold; cursor: pointer; }
-
-        #loader { display: none; width: 100%; height: 2px; background: #111; position: relative; overflow: hidden; margin-bottom: 15px; }
-        #loader::after { content: ""; position: absolute; left: -50%; width: 40%; height: 100%; background: var(--matrix); animation: scan 1s infinite; }
-        @keyframes scan { from { left: -50%; } to { left: 100%; } }
+        .music-ctrl { position: fixed; bottom: 30px; left: 30px; padding: 10px; border: 1px solid var(--matrix); color: var(--matrix); cursor: pointer; z-index: 2000; font-size: 0.7rem; }
+        footer { text-align: center; padding: 60px; opacity: 0.4; border-top: 1px solid #111; font-size: 0.7rem; letter-spacing: 4px; }
     </style>
 </head>
 <body>
 
     <canvas id="canvas"></canvas>
+    <audio id="bg-audio" loop src="https://raw.githubusercontent.com/Vinny256/COMRADES-MD/main/assets/play.mp3"></audio>
+    <div class="music-ctrl" onclick="toggleMusic()" id="m-btn">SYS_AUDIO: OFF</div>
 
-    <div class="ui">
-        <div class="terminal">
-            <div style="display: flex; justify-content: space-between;">
-                <div class="path">root@comrades-md:~/authentication</div>
-                <div id="status" style="color: #444; font-size: 0.6rem;">IDLE</div>
+    <div class="overlay" id="overlay"></div>
+    <div class="modal" id="fork-modal">
+        <div class="logo-text" style="font-size: 1rem;">FORK_GUARD_v3</div>
+        <input type="text" id="gh-input" style="width:100%; background:transparent; border:1px solid var(--matrix); color:var(--matrix); margin:25px 0; padding:12px; text-align:center;" placeholder="GITHUB_USER">
+        <button class="btn btn-fill" style="width:100%;" onclick="runForkVerify()">VERIFY_REPO</button>
+        <p onclick="closeGuard()" style="font-size: 0.6rem; margin-top: 20px; cursor: pointer; color: #444;">[ BYPASS_ABORT ]</p>
+    </div>
+
+    <div class="wrapper">
+        <section id="home-view" class="view active">
+            <div class="logo-text" style="font-size: 3.5rem; margin-top: 50px;">COMRADES-MD</div>
+            <p style="text-align:center; color: var(--matrix); opacity: 0.6; letter-spacing: 5px;">V_3.0 NEURAL_INTERFACE</p>
+            
+            <div style="text-align: center; margin: 40px 0;">
+                <button class="btn btn-fill" style="padding: 18px 60px;" onclick="navTo('term-view')">INITIALIZE_TERMINAL</button>
             </div>
 
-            <input type="tel" id="phone">
-
-            <div class="btn-group">
-                <button class="btn" onclick="triggerQR()">GET_QR_CODE</button>
-                <button class="btn" onclick="triggerPairing()">GET_PAIRING_CODE</button>
-            </div>
-
-            <div id="loader"></div>
-
-            <div id="display-master">
-                <div id="pairing-area" class="result-box">
-                    <div style="font-size: 0.6rem; color: #888;">WHATSAPP_PAIR_CODE</div>
-                    <div id="pairing-code" class="code-text"></div>
-                    <button class="copy-btn" onclick="copyText('pairing-code')">COPY_CODE</button>
+            <div class="grid">
+                <div class="card" onclick="window.open('https://github.com/Vinny256/COMRADES-MD')">
+                    <i class="fas fa-code-branch"></i><h3>SOURCE_CODE</h3><p style="font-size: 0.6rem;">MAIN_REPOSITORY</p>
                 </div>
-
-                <div id="qr-area" class="result-box">
-                    <div id="qr-image-container"></div>
+                <div class="card" onclick="openGuard('https://dashboard.heroku.com/new?template=https://github.com/Vinny256/COMRADES-MD')">
+                    <i class="fas fa-server"></i><h3>HEROKU</h3><p style="font-size: 0.6rem;">DEPLOY_BOT</p>
                 </div>
-
-                <div id="session-area" class="session-box">
-                    <div style="color: var(--matrix); font-size: 0.6rem; margin-bottom: 10px;">> DECRYPTION_COMPLETE: SESSION_ID_FOUND</div>
-                    <div id="session-id" style="word-break: break-all; color: #fff; margin-bottom: 15px; font-size: 0.8rem; border-left: 2px solid var(--matrix); padding-left: 10px;"></div>
-                    <button class="copy-btn" onclick="copyText('session-id')">COPY_SESSION_ID</button>
+                <div class="card" onclick="openGuard('https://railway.app/new/template?template=https://github.com/Vinny256/COMRADES-MD')">
+                    <i class="fas fa-train"></i><h3>RAILWAY</h3><p style="font-size: 0.6rem;">DEPLOY_BOT</p>
+                </div>
+                <div class="card" onclick="openGuard('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD')">
+                    <i class="fas fa-cloud-upload-alt"></i><h3>RENDER</h3><p style="font-size: 0.6rem;">DEPLOY_BOT</p>
                 </div>
             </div>
-        </div>
+            <footer>&copy; 2026 COMRADES-MD | POWERED BY VINNY256</footer>
+        </section>
+
+        <section id="term-view" class="view">
+            <div class="terminal">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 25px;">
+                    <span onclick="navTo('home-view')" style="cursor: pointer; color: var(--matrix);">[ < EXIT_ROOT ]</span>
+                    <span style="color: #333;">root@comrades-terminal:~/auth</span>
+                </div>
+
+                <input type="tel" id="phone_field">
+
+                <div class="btn-group">
+                    <button class="btn" onclick="fetchQR()">GENERATE_QR</button>
+                    <button class="btn" onclick="fetchPair()">GENERATE_PAIR</button>
+                </div>
+
+                <div id="master-display">
+                    <div id="pair-display" class="stagnant-box">
+                        <div style="font-size: 0.6rem; color: #555;">STAGNANT_PAIR_CODE</div>
+                        <div id="pair-val" style="font-size: 3rem; color: var(--matrix); font-weight: bold; letter-spacing: 10px; margin: 15px 0;"></div>
+                        <button class="btn btn-fill" style="width:100%" onclick="copy('pair-val')">COPY_CODE</button>
+                    </div>
+
+                    <div id="qr-display" class="stagnant-box">
+                        <div id="qr-holder"></div>
+                    </div>
+
+                    <div id="session-display" class="session-id-box">
+                        <div style="color: var(--matrix); font-size: 0.7rem; margin-bottom: 10px;">> SESSION_ID_DECRYPTED</div>
+                        <div id="session-val" style="word-break: break-all; color: #fff; margin-bottom: 20px; font-size: 0.8rem; border-left: 3px solid var(--matrix); padding-left: 15px;"></div>
+                        <button class="btn btn-fill" style="width: 100%;" onclick="copy('session-val')">COPY_SESSION_ID</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
@@ -123,45 +164,42 @@
         const c = document.getElementById("canvas");
         const ctx = c.getContext("2d");
         c.width = window.innerWidth; c.height = window.innerHeight;
-        const chars = "01";
-        const fontSize = 16; const cols = c.width/fontSize; const drops = Array(Math.floor(cols)).fill(1);
+        const chars = "010101"; const fontSize = 16; const cols = c.width/fontSize;
+        const drops = Array(Math.floor(cols)).fill(1);
         function draw() { ctx.fillStyle="rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height); ctx.fillStyle="#0f0"; ctx.font=fontSize+"px monospace"; for(let i=0;i<drops.length;i++){ ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*fontSize, drops[i]*fontSize); if(drops[i]*fontSize > c.height && Math.random() > 0.975) drops[i]=0; drops[i]++; } }
         setInterval(draw, 50);
 
-        function notify(msg, isErr = false) { Toastify({ text: msg, duration: 3000, style: { background: "#000", color: isErr ? "#f00" : "#0f0", border: `1px solid ${isErr ? '#f00' : '#0f0'}`, fontFamily: 'Share Tech Mono' } }).showToast(); }
+        function notify(t, err=false) { Toastify({ text: t, duration: 3000, style: { background: "#000", color: err?"#f00":"#0f0", border: `1px solid ${err?"#f00":"#0f0"}`, fontFamily: 'Share Tech Mono' } }).showToast(); }
 
         const socket = io("https://comrades-session-65daf07fdaad.herokuapp.com");
-        const phoneInput = document.querySelector("#phone");
-        const iti = window.intlTelInput(phoneInput, { separateDialCode: true, initialCountry: "ke", utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js" });
+        const iti = window.intlTelInput(document.querySelector("#phone_field"), { separateDialCode: true, initialCountry: "ke", utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js" });
 
-        let activeRequest = null; // "QR" or "PAIR"
+        // Logic Controls
+        let qrLocked = true;
+        let pairLocked = true;
 
-        // Wipes display and stops background noise
-        function resetDisplay() {
-            document.getElementById('pairing-area').style.display = 'none';
-            document.getElementById('qr-area').style.display = 'none';
-            document.getElementById('session-area').style.display = 'none';
-            document.getElementById('qr-image-container').innerHTML = '';
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('status').innerText = "WAITING...";
+        function clearDisplay() {
+            document.getElementById('pair-display').style.display = 'none';
+            document.getElementById('qr-display').style.display = 'none';
+            document.getElementById('session-display').style.display = 'none';
         }
 
         // --- MANUAL TRIGGER: QR ---
-        function triggerQR() {
-            activeRequest = "QR";
-            resetDisplay();
-            notify("POSTING_QR_REQUEST...");
+        function fetchQR() {
+            qrLocked = false; // Unlock listener for one event
+            clearDisplay();
+            notify("REQUESTING_QR_DATA...");
             fetch(`${socket.io.uri}/start-qr`, { method: 'POST' });
         }
 
-        // --- MANUAL TRIGGER: PAIRING ---
-        function triggerPairing() {
+        // --- MANUAL TRIGGER: PAIR ---
+        function fetchPair() {
             const num = iti.getNumber().replace(/\D/g, '');
-            if(num.length < 10) return notify("ERR: INVALID_NUMBER", true);
+            if(num.length < 8) return notify("ERR: INVALID_NUMBER", true);
             
-            activeRequest = "PAIR";
-            resetDisplay();
-            notify(`POSTING_PAIR_REQUEST for +${num}...`);
+            pairLocked = false; // Unlock listener for one event
+            clearDisplay();
+            notify("REQUESTING_PAIR_DATA...");
             fetch(`${socket.io.uri}/start-pairing`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -169,43 +207,65 @@
             });
         }
 
-        // --- SOCKETS: ONLY REACT TO MANUAL TRIGGERS ---
+        // --- LISTENERS WITH LOCKS ---
         socket.on('qr', url => {
-            if(activeRequest !== "QR") return; // Ignore if user didn't ask for QR
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('status').innerText = "QR_READY";
-            document.getElementById('qr-area').style.display = 'block';
-            document.getElementById('qr-image-container').innerHTML = `<img src="${url}" style="width:200px; border:4px solid #fff; padding:5px; background:#fff;">`;
-            notify("QR_CODE_LOADED");
+            if(qrLocked) return; // Ignore if user didn't click button or already has one
+            document.getElementById('qr-display').style.display = 'block';
+            document.getElementById('qr-holder').innerHTML = `<img src="${url}" style="width:230px; border:10px solid #fff; background:#fff;">`;
+            notify("QR_STAGNATED_SUCCESS");
+            qrLocked = true; // RE-LOCK: Will never update again unless button clicked
         });
 
         socket.on('pairing-code', code => {
-            if(activeRequest !== "PAIR") return; // Ignore if user didn't ask for Pair
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('status').innerText = "PAIR_READY";
-            document.getElementById('pairing-area').style.display = 'block';
-            document.getElementById('pairing-code').innerText = code;
-            notify("PAIRING_CODE_LOADED");
+            if(pairLocked) return; // Ignore if user didn't click button
+            document.getElementById('pair-display').style.display = 'block';
+            document.getElementById('pair-val').innerText = code;
+            notify("PAIR_STAGNATED_SUCCESS");
+            pairLocked = true; // RE-LOCK: Stays stagnant
         });
 
-        // --- FINAL SUCCESS: SESSION ID ---
+        // --- FINAL SESSION ID (From Backend) ---
         socket.on('session', id => {
-            // Success event from backend! 
-            // Wipe everything (QR or Pairing) and show the ID
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('qr-area').style.display = 'none';
-            document.getElementById('pairing-area').style.display = 'none';
-            
-            document.getElementById('status').innerText = "CONNECTED";
-            document.getElementById('session-area').style.display = 'block';
-            document.getElementById('session-id').innerText = id;
-            notify("SESSION_LINKED_SUCCESSFULLY!");
+            clearDisplay();
+            document.getElementById('session-display').style.display = 'block';
+            document.getElementById('session-val').innerText = id;
+            notify("CONNECTION_ESTABLISHED!");
         });
 
-        function copyText(id) {
-            const text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text);
-            notify("DATA_COPIED");
+        // Fork Guard Logic
+        let pendingUrl = "";
+        function openGuard(u) { pendingUrl = u; document.getElementById('overlay').style.display='block'; document.getElementById('fork-modal').style.display='block'; }
+        function closeGuard() { document.getElementById('overlay').style.display='none'; document.getElementById('fork-modal').style.display='none'; }
+        async function runForkVerify() {
+            const user = document.getElementById('gh-input').value.trim();
+            if(!user) return notify("USER_ID_REQUIRED", true);
+            try {
+                const res = await fetch(`https://api.github.com/repos/Vinny256/COMRADES-MD/forks`);
+                const f = await res.json();
+                if(f.some(x=>x.owner.login.toLowerCase()===user.toLowerCase())) {
+                    notify("FORK_VERIFIED"); setTimeout(()=>{ window.open(pendingUrl); closeGuard(); }, 1000);
+                } else {
+                    notify("FORK_NOT_FOUND", true); setTimeout(()=>window.open('https://github.com/Vinny256/COMRADES-MD/fork'), 1000);
+                }
+            } catch(e) { notify("API_THROTTLE_ERROR", true); }
+        }
+
+        function copy(id) {
+            navigator.clipboard.writeText(document.getElementById(id).innerText);
+            notify("COPIED_TO_CLIPBOARD");
+        }
+
+        function navTo(id) { 
+            document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); 
+            document.getElementById(id).classList.add('active'); 
+            if(id === 'term-view') toggleMusic(true);
+        }
+
+        function toggleMusic(force=false) {
+            const a = document.getElementById('bg-audio');
+            const b = document.getElementById('m-btn');
+            if(a.paused || force) { a.play().catch(()=>{}); b.innerText="SYS_AUDIO: ON"; }
+            else { a.pause(); b.innerText="SYS_AUDIO: OFF"; }
         }
     </script>
 </body>
