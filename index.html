@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMRADES-MD | The Future of WhatsApp</title>
+    <title>COMRADES-MD | Obsidian Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #050505;
-            --card-bg: #0f0f0f;
+            --card-bg: rgba(15, 15, 15, 0.8);
             --accent: #ffffff;
-            --border: #1a1a1a;
+            --border: rgba(255, 255, 255, 0.1);
             --text-secondary: #888888;
+            --glow: rgba(255, 255, 255, 0.05);
         }
 
         body {
@@ -23,6 +24,16 @@
             overflow-x: hidden;
         }
 
+        /* Interactive Particle Background */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
         /* Glass Navbar */
         nav {
             padding: 20px 10%;
@@ -30,116 +41,216 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .logo { font-family: 'Orbitron'; font-weight: 700; letter-spacing: 2px; font-size: 1.2rem; }
+        .logo { 
+            font-family: 'Orbitron'; 
+            font-weight: 700; 
+            letter-spacing: 4px; 
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
 
         /* Hero Section */
         .hero {
-            height: 80vh;
+            height: 85vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             padding: 0 10%;
-            background: radial-gradient(circle at center, #111 0%, #050505 100%);
         }
 
         .hero h1 {
             font-family: 'Orbitron';
             font-size: clamp(2.5rem, 8vw, 5rem);
             margin: 0;
-            line-height: 1;
+            line-height: 1.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         .hero p {
             color: var(--text-secondary);
             max-width: 600px;
             font-size: 1.1rem;
-            margin: 20px 0 40px 0;
+            margin: 30px 0 40px 0;
+            letter-spacing: 1px;
         }
 
         .btn-main {
-            padding: 18px 40px;
+            padding: 18px 45px;
             background: var(--accent);
             color: black;
             text-decoration: none;
             font-weight: 700;
-            border-radius: 5px;
-            transition: 0.3s;
+            border-radius: 2px; /* Sharp modern look */
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+        .btn-main:hover { 
+            transform: scale(1.1); 
+            box-shadow: 0 0 40px rgba(255,255,255,0.4);
+            letter-spacing: 4px;
+        }
 
-        /* Features Grid */
-        .features {
+        /* Dynamic Deployment Container (New Section) */
+        .deploy-hub {
+            padding: 60px 10%;
+            text-align: center;
+        }
+
+        .section-title {
+            font-family: 'Orbitron';
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            color: var(--accent);
+            letter-spacing: 3px;
+        }
+
+        .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 100px 10%;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
         }
 
-        .card {
+        .glass-card {
             background: var(--card-bg);
+            backdrop-filter: blur(10px);
             padding: 40px;
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 16px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .glass-card:hover::before { left: 100%; }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .glass-card i { font-size: 2.5rem; margin-bottom: 25px; color: var(--accent); }
+        
+        .deploy-btn {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
             transition: 0.3s;
         }
 
-        .card:hover { border-color: #333; transform: translateY(-5px); }
-        .card i { font-size: 2rem; margin-bottom: 20px; }
-        .card h3 { margin-bottom: 15px; font-family: 'Orbitron'; font-size: 1rem; }
-        .card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+        .deploy-btn:hover {
+            background: var(--accent);
+            color: #000;
+        }
 
         footer {
-            padding: 40px;
+            padding: 60px;
             text-align: center;
             border-top: 1px solid var(--border);
             color: var(--text-secondary);
             font-size: 0.8rem;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
+
+    <div id="particles-js"></div>
+
     <nav>
         <div class="logo">COMRADES-MD</div>
-        <a href="https://github.com/your-repo" style="color:white; text-decoration:none;"><i class="fab fa-github"></i></a>
+        <div class="nav-links">
+            <a href="https://github.com/your-repo" style="color:white; font-size: 1.5rem;"><i class="fab fa-github"></i></a>
+        </div>
     </nav>
 
     <section class="hero">
-        <h1>POWER. SPEED. <br> SIMPLICITY.</h1>
-        <p>Introducing COMRADES-MD: The most advanced WhatsApp multi-device bot designed for automation, group management, and seamless performance.</p>
-        <a href="session.html" class="btn-main">Get Started <i class="fas fa-arrow-right"></i></a>
+        <h1>BEYOND <br> AUTOMATION.</h1>
+        <p>Experience the next generation of WhatsApp MD Bots. Minimalist design, maximalist power.</p>
+        <a href="session.html" class="btn-main">Get Session</a>
     </section>
 
-    <section class="features">
-        <div class="card">
-            <i class="fas fa-bolt" style="color: #fbbf24;"></i>
-            <h3>Ultra Fast</h3>
-            <p>Built on the latest Baileys library for near-instant response times and low latency.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-shield-alt" style="color: #10b981;"></i>
-            <h3>Safe & Secure</h3>
-            <p>End-to-end encryption maintained. We never store your personal chats or media.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-code" style="color: #3b82f6;"></i>
-            <h3>Open Source</h3>
-            <p>Fully customizable. Add your own commands and plugins with ease.</p>
+    <section class="deploy-hub">
+        <h2 class="section-title">DEPLOYMENT HUB</h2>
+        <div class="grid-container">
+            <div class="glass-card">
+                <i class="fas fa-server"></i>
+                <h3>Heroku</h3>
+                <p>Deploy to Heroku's cloud platform for stable 24/7 uptime.</p>
+                <a href="#" class="deploy-btn">DEPLOY NOW</a>
+            </div>
+
+            <div class="glass-card">
+                <i class="fas fa-train"></i>
+                <h3>Railway</h3>
+                <p>Modern infrastructure with easy GitHub integration.</p>
+                <a href="#" class="deploy-btn">DEPLOY NOW</a>
+            </div>
+
+            <div class="glass-card">
+                <i class="fas fa-cloud"></i>
+                <h3>Render</h3>
+                <p>The fastest way to host your Node.js bot applications.</p>
+                <a href="#" class="deploy-btn">DEPLOY NOW</a>
+            </div>
         </div>
     </section>
 
     <footer>
-        &copy; 2026 COMRADES-MD | Engineered for Excellence
+        &copy; 2026 COMRADES-MD | CREATED BY VINNIE HUB
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 120, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.3, "random": true },
+                "size": { "value": 2, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1, "width": 1 },
+                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
+                "modes": { "grab": { "distance": 200, "line_linked": { "opacity": 0.4 } } }
+            },
+            "retina_detect": true
+        });
+    </script>
 </body>
 </html>
