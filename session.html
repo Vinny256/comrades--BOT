@@ -6,114 +6,278 @@
     <title>Session Generator | COMRADES-MD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+    
     <style>
+        :root {
+            --bg: #000000;
+            --card-bg: rgba(10, 10, 10, 0.95);
+            --accent: #ffffff;
+            --border: #1a1a1a;
+            --success: #10b981;
+        }
+
         body {
             margin: 0;
-            background: #000;
+            background: var(--bg);
             color: white;
             font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
         }
 
         .session-container {
             width: 90%;
-            max-width: 400px;
-            background: #0a0a0a;
-            border: 1px solid #1a1a1a;
-            padding: 40px;
-            border-radius: 16px;
+            max-width: 420px;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            padding: 35px;
+            border-radius: 24px;
             text-align: center;
+            box-shadow: 0 0 40px rgba(255,255,255,0.02);
+            position: relative;
         }
 
-        .logo-sm { font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 30px; letter-spacing: 3px; }
+        .back-btn {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+        .back-btn:hover { color: #fff; }
 
+        .logo-sm { 
+            font-family: 'Orbitron'; 
+            font-size: 1.2rem; 
+            margin-bottom: 30px; 
+            letter-spacing: 5px;
+            margin-top: 15px;
+        }
+
+        /* Phone Input Overrides for Modern Black Theme */
+        .iti { width: 100%; margin-bottom: 25px; text-align: left; }
+        .iti__country-list { background-color: #0a0a0a; border: 1px solid #333; color: white; width: 300px; }
+        .iti__country:hover { background-color: #1a1a1a; }
+        .iti__selected-flag { background-color: #050505; border-radius: 12px 0 0 12px; border-right: 1px solid #222; }
+        
         input {
-            width: 100%;
-            background: #000;
-            border: 1px solid #222;
-            padding: 15px;
-            border-radius: 8px;
-            color: white;
-            margin-bottom: 20px;
-            box-sizing: border-box;
+            width: 100% !important;
+            background: #050505 !important;
+            border: 1px solid #222 !important;
+            padding: 18px 18px 18px 52px !important;
+            border-radius: 12px !important;
+            color: white !important;
             outline: none;
             transition: 0.3s;
+            font-size: 1.1rem;
+            font-family: 'Inter', sans-serif;
         }
-        input:focus { border-color: #555; }
+        input:focus { border-color: #ffffff !important; }
 
-        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-group { display: flex; gap: 12px; margin-bottom: 25px; }
 
         button {
             flex: 1;
-            padding: 12px;
+            padding: 15px;
             background: #fff;
             color: #000;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 700;
             cursor: pointer;
             font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
+        .btn-pair { background: #000; color: #fff; border: 1px solid #222; }
 
         #status-terminal {
             font-family: monospace;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #555;
             margin-bottom: 20px;
-            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .result-area {
             display: none;
-            background: #111;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border: 1px solid #333;
+            background: rgba(255,255,255,0.03);
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 25px;
+            border: 1px solid #1a1a1a;
+            animation: fadeInScale 0.4s ease;
         }
+
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         .code-text {
             word-break: break-all;
-            color: #10b981;
+            color: var(--success);
             font-family: monospace;
-            margin: 10px 0;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            letter-spacing: 1px;
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
         }
 
         #qr-container img {
-            width: 200px;
-            border: 1px solid #333;
-            margin-top: 20px;
+            width: 240px;
+            border: 8px solid #fff;
+            border-radius: 4px;
+            margin-top: 10px;
         }
+
+        .copy-btn { width: 100%; background: var(--success); color: white; }
+
+        #toast {
+            visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--success); color: #fff; padding: 12px 30px; border-radius: 8px; font-weight: bold;
+            z-index: 1000;
+        }
+        #toast.show { visibility: visible; animation: fadeInUp 0.5s; }
     </style>
 </head>
 <body>
+
+    <div id="particles-js"></div>
+
     <div class="session-container">
+        <a href="index.html" class="back-btn"><i class="fas fa-chevron-left"></i> BACK</a>
         <div class="logo-sm">COMRADES-MD</div>
-        <div id="status-terminal">> SYSTEM IDLE</div>
+        <div id="status-terminal">> SYSTEM_IDLE</div>
         
-        <input type="text" id="phone" placeholder="Enter number (e.g. 254...)">
-        
-        <div class="btn-group">
-            <button onclick="getQRCode()">QR SCAN</button>
-            <button onclick="getPairCode()" style="background: #111; color: white; border: 1px solid #333;">PAIRING</button>
+        <div id="input-section">
+            <input type="tel" id="phone">
+            <div class="btn-group">
+                <button onclick="getQRCode()"><i class="fas fa-qrcode"></i> SCAN QR</button>
+                <button class="btn-pair" onclick="getPairCode()"><i class="fas fa-terminal"></i> USE CODE</button>
+            </div>
         </div>
 
         <div id="qr-container"></div>
 
         <div id="pair-area" class="result-area">
+            <div style="font-size: 0.7rem; color: #888; letter-spacing: 1px;">WHATSAPP PAIRING CODE</div>
             <div id="pair-display" class="code-text"></div>
-            <button onclick="copy('pair-display')">COPY CODE</button>
+            <button class="copy-btn" onclick="copy('pair-display')"><i class="fas fa-copy"></i> COPY CODE</button>
         </div>
 
         <div id="session-area" class="result-area">
-            <div style="font-size: 0.7rem; color: #888;">SUCCESS! COPY SESSION BELOW</div>
+            <div style="font-size: 0.7rem; color: #888;">DEPLOYMENT SESSION ID</div>
             <div id="session-display" class="code-text"></div>
-            <button onclick="copy('session-display')">COPY SESSION</button>
+            <button class="copy-btn" onclick="copy('session-display')"><i class="fas fa-copy"></i> COPY SESSION</button>
         </div>
     </div>
 
-    </body>
+    <div id="toast">COPIED TO CLIPBOARD</div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <script>
+        // Initialize Background
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 60 },
+                "color": { "value": "#ffffff" },
+                "opacity": { "value": 0.1 },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.05 }
+            }
+        });
+
+        // Initialize International Flags (All Countries)
+        const phoneInput = document.querySelector("#phone");
+        const iti = window.intlTelInput(phoneInput, {
+            separateDialCode: true,
+            initialCountry: "auto",
+            geoIpLookup: function(success, failure) {
+                fetch("https://ipapi.co/json").then(res => res.json()).then(data => success(data.country_code)).catch(() => success("ke"));
+            },
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+        });
+
+        // Backend URL Logic
+        const socket = io("https://comrades-session-65daf07fdaad.herokuapp.com");
+
+        function getQRCode() {
+            document.getElementById('status-terminal').innerText = "> FETCHING_QR_DATA...";
+            fetch(`${socket.io.uri}/start-qr`, { method: 'POST' });
+        }
+
+        function getPairCode() {
+            const rawValue = phoneInput.value.trim();
+            if(!rawValue) return alert("Enter your number first.");
+
+            document.getElementById('status-terminal').innerText = "> INITIATING_PAIRING...";
+            
+            // Smart Sanitization Logic
+            const dialCode = iti.getSelectedCountryData().dialCode;
+            let cleanNumber = rawValue;
+            
+            // If user types local '0' (like 07xx), remove it
+            if (cleanNumber.startsWith('0')) {
+                cleanNumber = cleanNumber.substring(1);
+            }
+            
+            const finalNumber = dialCode + cleanNumber;
+
+            fetch(`${socket.io.uri}/start-pairing`, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ phoneNumber: finalNumber }) 
+            });
+        }
+
+        function copy(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            const t = document.getElementById('toast');
+            t.className = "show";
+            setTimeout(() => t.className = "", 3000);
+        }
+
+        // Socket Events
+        socket.on('qr', url => {
+            document.getElementById('status-terminal').innerText = "> QR_READY_FOR_SCAN";
+            document.getElementById('qr-container').innerHTML = `<img src="${url}">`;
+            document.getElementById('pair-area').style.display = "none";
+        });
+
+        socket.on('pairing-code', code => {
+            document.getElementById('status-terminal').innerText = "> HANDSHAKE_SUCCESS";
+            document.getElementById('pair-area').style.display = "block";
+            document.getElementById('pair-display').innerText = code;
+            document.getElementById('qr-container').innerHTML = "";
+        });
+
+        socket.on('session-ready', id => {
+            document.getElementById('status-terminal').innerText = "> SESSION_LOCKED";
+            document.getElementById('session-area').style.display = "block";
+            document.getElementById('session-display').innerText = id;
+            document.getElementById('pair-area').style.display = "none";
+            document.getElementById('qr-container').innerHTML = "";
+        });
+    </script>
+</body>
 </html>
