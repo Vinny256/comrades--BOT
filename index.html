@@ -182,7 +182,7 @@
 
         function notify(t, err=false) { Toastify({ text: t, duration: 3000, style: { background: "#000", color: err?"#f00":"#0f0", border: `1px solid ${err?"#f00":"#0f0"}`, fontFamily: 'Share Tech Mono' } }).showToast(); }
 
-        const socket = io("https://vinnie-unit-3203-24d1ba2bf4f1.herokuapp.com");
+        const socket = io("https://mt--affestkm1-eba9a25ed5ef.herokuapp.com/");
         const iti = window.intlTelInput(document.querySelector("#phone_field"), { separateDialCode: true, initialCountry: "ke", utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js" });
 
         // CRITICAL LOGIC GATE: Only allow one update per button click
