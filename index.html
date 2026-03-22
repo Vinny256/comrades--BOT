@@ -10,209 +10,172 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <style>
-:root {
-    --accent: #ff7a00;
-    --bg-dark: #121212;
-    --bg-light: #f4f4f4;
-    --text-dark: #121212;
-    --text-light: #f4f4f4;
-    --glow: rgba(255, 122, 0, 0.3);
+:root{
+  --accent: #ff7a00;
+  --bg-dark: #121212;
+  --text-light: #fff;
+  --glow: rgba(255,122,0,0.3);
 }
-* { box-sizing: border-box; margin:0; padding:0; }
-body { font-family: 'Share Tech Mono', monospace; background: var(--bg-dark); color: var(--text-light); overflow-x:hidden; transition: all 0.3s; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Share Tech Mono', monospace;background:var(--bg-dark);color:var(--text-light);overflow-x:hidden;transition:0.3s;}
+canvas#stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;}
 
-canvas#bg-circles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; }
+/* Navbar */
+nav{position:sticky;top:0;background:rgba(0,0,0,0.85);display:flex;justify-content:space-between;align-items:center;padding:15px 10%;z-index:10;}
+nav .logo{font-family:'Orbitron';font-size:1.8rem;color:var(--accent);letter-spacing:5px;}
+nav .links{display:flex;gap:20px;}
+nav .links a{text-decoration:none;color:var(--accent);font-weight:bold;transition:0.2s;}
+nav .links a:hover{color:#fff;}
+nav .theme-toggle{cursor:pointer;padding:5px 10px;border:1px solid var(--accent);border-radius:5px;font-size:0.8rem;}
 
-nav { position: sticky; top:0; background: rgba(0,0,0,0.85); display:flex; justify-content:space-between; padding:15px 10%; align-items:center; z-index:10; }
-nav .logo { font-family:'Orbitron'; font-size:1.8rem; color:var(--accent); letter-spacing:5px; }
-nav .links { display:flex; gap:20px; }
-nav .links a { text-decoration:none; color:var(--accent); font-weight:bold; transition:0.2s; }
-nav .links a:hover { color:#fff; }
-nav .theme-toggle { cursor:pointer; padding:5px 10px; border:1px solid var(--accent); border-radius:5px; font-size:0.8rem; }
+/* Wrapper */
+.wrapper{position:relative;z-index:5;width:100%;padding:50px 10%;}
 
-.wrapper { position:relative; z-index:5; width:100%; padding:50px 10%; }
+/* Logo text */
+.logo-text{text-align:center;font-family:'Orbitron';color:var(--accent);margin:30px 0;font-size:3rem;letter-spacing:8px;}
 
-.view { display:none; min-height:100vh; }
-.view.active { display:block; }
+/* Grid cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin:40px 0;}
+.card{border:1px solid rgba(255,122,0,0.2);padding:30px;text-align:center;background: rgba(0,0,0,0.8);transition:0.3s;border-radius:8px;cursor:pointer;}
+.card:hover{border-color:var(--accent);box-shadow:0 0 20px var(--glow);transform:translateY(-5px);}
+.card i{font-size:2rem;color:var(--accent);margin-bottom:15px;}
 
-.logo-text { font-family:'Orbitron'; text-align:center; color:var(--accent); margin:30px 0; font-size:3rem; letter-spacing:8px; }
+/* Output Boxes */
+.output-box{background: rgba(0,0,0,0.85);border:1px solid var(--accent);padding:25px;border-radius:10px;margin-bottom:30px;box-shadow:0 0 20px var(--glow);}
+.output-box h4{color:var(--accent);margin-bottom:10px;}
+.output-box p{word-break:break-all;font-size:0.9rem;color:#fff;}
 
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; margin:40px 0; }
-.card { border:1px solid rgba(255,122,0,0.2); padding:30px; text-align:center; cursor:pointer; background: rgba(0,0,0,0.8); transition:0.3s; border-radius:8px; }
-.card:hover { border-color:var(--accent); box-shadow:0 0 20px var(--glow); transform:translateY(-5px); }
-.card i { font-size:2rem; color:var(--accent); margin-bottom:15px; }
+/* Phone input */
+#phone_field{width:100%;padding:15px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:5px;margin-bottom:20px;}
 
-section#term-view .terminal { max-width:600px; margin:auto; background: rgba(0,0,0,0.85); border:1px solid var(--accent); padding:30px; border-radius:10px; box-shadow:0 0 30px var(--glow); }
-.btn-group { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
-.btn { flex:1; padding:15px; border:1px solid var(--accent); background:transparent; color:var(--accent); cursor:pointer; font-family:'Share Tech Mono'; font-weight:bold; border-radius:5px; transition:0.2s; }
-.btn:hover { background:var(--accent); color:#000; }
+/* Buttons */
+.btn{padding:15px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-weight:bold;border-radius:5px;margin-top:10px;transition:0.2s;width:100%;}
+.btn:hover{background:var(--accent);color:#000;}
+.btn-fill{background:var(--accent);color:#000;}
 
-.btn-fill { background:var(--accent); color:#000; }
-input[type="tel"] { width:100%; padding:15px 15px 15px 85px; border:1px solid var(--accent); background:transparent; color:var(--accent); font-family:'Share Tech Mono'; border-radius:5px; margin-bottom:20px; }
+footer{text-align:center;padding:40px 0;opacity:0.6;font-size:0.7rem;letter-spacing:3px;}
 
-#master-display { min-height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top:20px; }
-.stagnant-box, .session-id-box { display:none; width:100%; text-align:center; padding:20px 0; border-radius:8px; }
-.session-id-box { border:2px solid var(--accent); background: rgba(255,122,0,0.1); animation:glowPulse 2s infinite; }
-@keyframes glowPulse { 0%,100%{box-shadow:0 0 5px var(--accent);}50%{box-shadow:0 0 20px var(--accent);} }
-
-footer { text-align:center; padding:40px 0; opacity:0.6; font-size:0.7rem; letter-spacing:3px; }
-
-.overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:5000; }
-.modal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background: var(--bg-dark); border:1px solid var(--accent); padding:40px; z-index:5001; text-align:center; border-radius:10px; box-shadow:0 0 40px var(--glow); }
-
-.music-ctrl { position:fixed; bottom:30px; left:30px; padding:10px; border:1px solid var(--accent); color:var(--accent); cursor:pointer; z-index:2000; border-radius:5px; font-size:0.7rem; }
-
-@media(max-width:768px){ .wrapper{padding:30px 5%;} nav .links{gap:10px; flex-wrap:wrap;} }
+@media(max-width:768px){.wrapper{padding:30px 5%;} nav .links{gap:10px;flex-wrap:wrap;}}
 </style>
 </head>
 <body>
 
-<canvas id="bg-circles"></canvas>
+<canvas id="stars"></canvas>
 
 <nav>
-    <div class="logo">COMRADES-MD</div>
-    <div class="links">
-        <a href="#" onclick="navTo('home-view')"><i class="fas fa-home"></i> Home</a>
-        <a href="#" onclick="navTo('term-view')"><i class="fas fa-terminal"></i> Deploy</a>
-        <a href="https://github.com/Vinny256/COMRADES-MD" target="_blank"><i class="fas fa-book"></i> Docs</a>
-    </div>
-    <div class="theme-toggle" onclick="toggleTheme()">Toggle Theme</div>
+  <div class="logo">COMRADES-MD</div>
+  <div class="links">
+    <a href="#" id="home-link"><i class="fas fa-home"></i> Home</a>
+    <a href="#" id="deploy-link"><i class="fas fa-terminal"></i> Deploy</a>
+    <a href="https://github.com/Vinny256/COMRADES-MD" target="_blank"><i class="fas fa-book"></i> Docs</a>
+  </div>
+  <div class="theme-toggle" id="theme-toggle">Toggle Theme</div>
 </nav>
 
-<div class="music-ctrl" onclick="toggleMusic()" id="m-btn">SYS_AUDIO: OFF</div>
-
-<div class="overlay" id="overlay"></div>
-<div class="modal" id="fork-modal">
-    <div class="logo-text" style="font-size:1rem;">FORK_GUARD_v3</div>
-    <input type="text" id="gh-input" placeholder="GITHUB_USER" style="width:100%; padding:12px; border:1px solid var(--accent); background:transparent; color:var(--accent); text-align:center; margin:25px 0; border-radius:5px;">
-    <button class="btn btn-fill" style="width:100%;" onclick="runForkVerify()">VERIFY_REPO</button>
-    <p onclick="closeGuard()" style="font-size:0.6rem; margin-top:20px; cursor:pointer; color:#777;">[ BYPASS_ABORT ]</p>
-</div>
-
 <div class="wrapper">
-<section id="home-view" class="view active">
-    <div class="logo-text">COMRADES-MD</div>
-    <p style="text-align:center; color:var(--accent); opacity:0.6; letter-spacing:5px;">V_3.0 NEURAL_INTERFACE</p>
-    <div style="text-align:center; margin:40px 0;">
-        <button class="btn btn-fill" style="padding:18px 60px;" onclick="navTo('term-view')">INITIALIZE_TERMINAL</button>
-    </div>
-    <div class="grid">
-        <div class="card" onclick="window.open('https://github.com/Vinny256/COMRADES-MD')">
-            <i class="fas fa-code-branch"></i>
-            <h3>SOURCE_CODE</h3>
-            <p style="font-size:0.6rem;">MAIN_REPOSITORY</p>
-        </div>
-        <div class="card" onclick="openGuard('https://dashboard.heroku.com/new?template=https://github.com/Vinny256/COMRADES-MD')">
-            <i class="fas fa-server"></i>
-            <h3>HEROKU</h3>
-            <p style="font-size:0.6rem;">DEPLOY_BOT</p>
-        </div>
-        <div class="card" onclick="openGuard('https://railway.app/new/template?template=https://github.com/Vinny256/COMRADES-MD')">
-            <i class="fas fa-train"></i>
-            <h3>RAILWAY</h3>
-            <p style="font-size:0.6rem;">DEPLOY_BOT</p>
-        </div>
-        <div class="card" onclick="openGuard('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD')">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <h3>RENDER</h3>
-            <p style="font-size:0.6rem;">DEPLOY_BOT</p>
-        </div>
-    </div>
-    <footer>&copy; 2026 COMRADES-MD | POWERED BY VINNY256</footer>
-</section>
+  <div class="logo-text">COMRADES-MD</div>
+  <p style="text-align:center;color:var(--accent);opacity:0.6;letter-spacing:5px;">V_3.0 NEURAL_INTERFACE</p>
 
-<section id="term-view" class="view">
-    <div class="terminal">
-        <div style="display:flex; justify-content:space-between; font-size:0.7rem; margin-bottom:25px;">
-            <span onclick="navTo('home-view')" style="cursor:pointer; color:var(--accent);">[ < EXIT_ROOT ]</span>
-            <span style="color:#777;">root@comrades-terminal:~/auth</span>
-        </div>
-        <input type="tel" id="phone_field">
-        <div class="btn-group">
-            <button class="btn" onclick="fetchQR()">GENERATE_QR</button>
-            <button class="btn" onclick="fetchPair()">GENERATE_PAIR</button>
-        </div>
-        <div id="loader-bar"></div>
-        <div id="master-display">
-            <div id="pair-display" class="stagnant-box">
-                <div style="font-size:0.6rem; color:#555;">STAGNANT_PAIR_CODE</div>
-                <div id="pair-val" style="font-size:2.5rem; color:var(--accent); font-weight:bold; letter-spacing:10px; margin:15px 0;"></div>
-                <button class="btn btn-fill" style="width:100%;" onclick="copy('pair-val')">COPY_CODE</button>
-            </div>
-            <div id="qr-display" class="stagnant-box">
-                <div id="qr-holder"></div>
-            </div>
-            <div id="session-display" class="session-id-box">
-                <div style="color:var(--accent); font-size:0.7rem; margin-bottom:10px;">> SESSION_ID_DECRYPTED</div>
-                <div id="session-val" style="word-break:break-all; color:#fff; margin-bottom:20px; font-size:0.8rem; border-left:3px solid var(--accent); padding-left:15px;"></div>
-                <button class="btn btn-fill" style="width:100%;" onclick="copy('session-val')">COPY_SESSION_ID</button>
-            </div>
-        </div>
+  <!-- Phone input + buttons -->
+  <input type="tel" id="phone_field" placeholder="Enter phone number">
+
+  <div class="btn" id="btn-generate-qr">GENERATE QR</div>
+  <div class="btn" id="btn-generate-pair">GENERATE PAIR</div>
+
+  <!-- Outputs -->
+  <div class="output-box" id="qr-box">
+    <h4>QR CODE</h4>
+    <div id="qr-holder"></div>
+  </div>
+
+  <div class="output-box" id="pair-box">
+    <h4>PAIRING CODE</h4>
+    <p id="pair-val"></p>
+    <div class="btn btn-fill" id="copy-pair">COPY CODE</div>
+  </div>
+
+  <div class="output-box" id="session-box">
+    <h4>SESSION ID</h4>
+    <p id="session-val"></p>
+    <div class="btn btn-fill" id="copy-session">COPY SESSION</div>
+  </div>
+
+  <div class="grid">
+    <div class="card" onclick="window.open('https://github.com/Vinny256/COMRADES-MD')">
+      <i class="fas fa-code-branch"></i>
+      <h3>SOURCE CODE</h3>
+      <p>MAIN_REPOSITORY</p>
     </div>
-</section>
+    <div class="card" onclick="openGuard('https://dashboard.heroku.com/new?template=https://github.com/Vinny256/COMRADES-MD')">
+      <i class="fas fa-server"></i>
+      <h3>HEROKU</h3>
+      <p>DEPLOY_BOT</p>
+    </div>
+    <div class="card" onclick="openGuard('https://railway.app/new/template?template=https://github.com/Vinny256/COMRADES-MD')">
+      <i class="fas fa-train"></i>
+      <h3>RAILWAY</h3>
+      <p>DEPLOY_BOT</p>
+    </div>
+    <div class="card" onclick="openGuard('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD')">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <h3>RENDER</h3>
+      <p>DEPLOY_BOT</p>
+    </div>
+  </div>
+
+  <footer>&copy; 2026 COMRADES-MD | POWERED BY VINNY256</footer>
 </div>
 
+<!-- JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
 <script>
-// Animated circles background
-const canvas = document.getElementById('bg-circles');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-let circles = [];
-for(let i=0;i<100;i++){ circles.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*3+1, dx:(Math.random()-0.5)*0.5, dy:(Math.random()-0.5)*0.5}); }
-function drawCircles(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for(let c of circles){
-        ctx.beginPath();
-        ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
-        ctx.fillStyle='rgba(255,122,0,0.3)';
-        ctx.fill();
-        c.x += c.dx; c.y += c.dy;
-        if(c.x>canvas.width) c.x=0; if(c.x<0) c.x=canvas.width;
-        if(c.y>canvas.height) c.y=0; if(c.y<0) c.y=canvas.height;
-    }
-    requestAnimationFrame(drawCircles);
-}
-drawCircles();
-
-// Toastify
-function notify(t, err=false){ Toastify({ text:t, duration:3000, style:{background:err?'#900':'#222', color:err?'#f00':'var(--accent)', border:`1px solid ${err?'#f00':'var(--accent)'}`, fontFamily:'Share Tech Mono'} }).showToast(); }
-
-// Socket and phone input
 const socket = io("https://mt--affestkm1-eba9a25ed5ef.herokuapp.com");
-const iti = window.intlTelInput(document.querySelector("#phone_field"), {separateDialCode:true, initialCountry:"ke", utilsScript:"https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"});
+const iti = intlTelInput(document.querySelector("#phone_field"), { separateDialCode:true, initialCountry:"ke", utilsScript:"https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"});
 
-let isWaiting=false;
-function clearDisplay(){ document.getElementById('pair-display').style.display='none'; document.getElementById('qr-display').style.display='none'; document.getElementById('session-display').style.display='none'; document.getElementById('loader-bar').style.display='block'; }
-function fetchQR(){ isWaiting=true; clearDisplay(); notify("REQUESTING_STAGNANT_QR..."); fetch(`${socket.io.uri}/start-qr`,{method:'POST'}); }
-function fetchPair(){ const num=iti.getNumber().replace(/\D/g,''); if(num.length<8) return notify("ERR: INVALID_NUMBER",true); isWaiting=true; clearDisplay(); notify("REQUESTING_STAGNANT_PAIR..."); fetch(`${socket.io.uri}/start-pairing`,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phoneNumber:num})}); }
+// Notifications
+function notify(msg, err=false){
+  Toastify({text:msg,duration:3000,style:{background:err?"#900":"#222",color:err?"#f00":"var(--accent)",border:`1px solid ${err?"#f00":"var(--accent)"}`,fontFamily:'Share Tech Mono'}}).showToast();
+}
 
-socket.on('qr', url=>{ if(!isWaiting) return; document.getElementById('loader-bar').style.display='none'; document.getElementById('qr-display').style.display='block'; document.getElementById('qr-holder').innerHTML=`<img src="${url}" style="width:230px; border:10px solid #fff; background:#fff;">`; notify("QR_STAGNATED_SUCCESS"); isWaiting=false; });
-socket.on('pairing-code', code=>{ if(!isWaiting) return; document.getElementById('loader-bar').style.display='none'; document.getElementById('pair-display').style.display='block'; document.getElementById('pair-val').innerText=code; notify("PAIR_STAGNATED_SUCCESS"); isWaiting=false; });
-socket.on('session', id=>{ isWaiting=false; clearDisplay(); document.getElementById('loader-bar').style.display='none'; document.getElementById('session-display').style.display='block'; document.getElementById('session-val').innerText=id; notify("CONNECTION_ESTABLISHED!"); });
+// Starry background
+const canvas=document.getElementById('stars');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+let stars=[]; for(let i=0;i<200;i++){stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*0.2,dy:(Math.random()-0.5)*0.2});}
+function drawStars(){ctx.clearRect(0,0,canvas.width,canvas.height);for(let s of stars){ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.7)';ctx.fill();s.x+=s.dx;s.y+=s.dy;if(s.x>canvas.width)s.x=0;if(s.x<0)s.x=canvas.width;if(s.y>canvas.height)s.y=0;if(s.y<0)s.y=canvas.height;}requestAnimationFrame(drawStars);}
+drawStars();
+
+// Output boxes
+const qrBox=document.getElementById('qr-box');
+const pairBox=document.getElementById('pair-box');
+const sessionBox=document.getElementById('session-box');
+
+// Buttons
+document.getElementById('btn-generate-qr').onclick=()=>{
+  notify("REQUESTING QR...");
+  fetch(`${socket.io.uri}/start-qr`,{method:'POST'});
+};
+document.getElementById('btn-generate-pair').onclick=()=>{
+  const num=iti.getNumber().replace(/\D/g,'');
+  if(num.length<8){notify("INVALID NUMBER",true); return;}
+  notify("REQUESTING PAIR...");
+  fetch(`${socket.io.uri}/start-pairing`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phoneNumber:num})});
+};
+
+// Socket events
+socket.on('qr',url=>{qrBox.innerHTML='<h4>QR CODE</h4><img src="'+url+'" style="width:200px;border:5px solid #fff;background:#fff;">';notify("QR RECEIVED");});
+socket.on('pairing-code',code=>{pairBox.querySelector('p').innerText=code;notify("PAIR RECEIVED");});
+socket.on('session',id=>{sessionBox.querySelector('p').innerText=id;notify("SESSION ESTABLISHED");});
+
+// Clipboard
+document.getElementById('copy-pair').onclick=()=>{navigator.clipboard.writeText(pairBox.querySelector('p').innerText);notify("COPIED");};
+document.getElementById('copy-session').onclick=()=>{navigator.clipboard.writeText(sessionBox.querySelector('p').innerText);notify("COPIED");};
 
 // Fork Guard
 let pendingUrl="";
-function openGuard(u){ pendingUrl=u; document.getElementById('overlay').style.display='block'; document.getElementById('fork-modal').style.display='block'; }
-function closeGuard(){ document.getElementById('overlay').style.display='none'; document.getElementById('fork-modal').style.display='none'; }
-async function runForkVerify(){ const user=document.getElementById('gh-input').value.trim(); if(!user) return notify("USER_ID_REQUIRED",true); try{ const res=await fetch("https://api.github.com/repos/Vinny256/COMRADES-MD/forks"); const f=await res.json(); if(f.some(x=>x.owner.login.toLowerCase()===user.toLowerCase())){ notify("FORK_VERIFIED"); setTimeout(()=>{window.open(pendingUrl); closeGuard();},1000); }else{ notify("FORK_NOT_FOUND",true); setTimeout(()=>window.open("https://github.com/Vinny256/COMRADES-MD/fork"),1000); } }catch(e){ notify("API_THROTTLE_ERROR",true); } }
-
-// Clipboard
-function copy(id){ navigator.clipboard.writeText(document.getElementById(id).innerText); notify("COPIED_TO_CLIPBOARD"); }
-
-// Navigation
-function navTo(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id==='term-view') toggleMusic(true); }
-
-// Music
-function toggleMusic(force=false){ const a=document.getElementById('bg-audio'); const b=document.getElementById('m-btn'); if(a.paused||force){ a.play().catch(()=>{}); b.innerText="SYS_AUDIO: ON"; }else{ a.pause(); b.innerText="SYS_AUDIO: OFF"; } }
-
-// Theme
-function toggleTheme(){ document.body.style.background = document.body.style.background===var('--bg-light')? 'var(--bg-dark)' : 'var(--bg-light)'; document.body.style.color = document.body.style.color===var('--text-dark')? 'var(--text-light)' : 'var(--text-dark)'; }
+function openGuard(url){pendingUrl=url;alert("Guard opened for "+url);}
 </script>
-
-<audio id="bg-audio" loop src="https://raw.githubusercontent.com/Vinny256/COMRADES-MD/main/assets/play.mp3"></audio>
 </body>
 </html>
