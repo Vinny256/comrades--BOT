@@ -81,6 +81,8 @@
 
         footer { padding: 80px 6%; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px; }
         .footer-col h4 { margin-bottom: 25px; color: var(--accent); }
+        .footer-col a { display: block; color: var(--text-dim); text-decoration: none; margin-bottom: 15px; font-size: 0.9rem; }
+        .footer-col a:hover { color: var(--accent); }
 
         @media (max-width: 900px) { .nav-menu { display: none; } .hamburger { display: flex; } .hero h1 { font-size: 2.5rem; } }
     </style>
@@ -120,6 +122,12 @@
         <h1>Ultimate Neural<br>Bot Interface</h1>
         <p>Advanced WhatsApp automation with Ghost Loader security. Infinite Impact by Vinnie Digital Hub.</p>
         <button class="main-btn" style="max-width: 300px;" onclick="showSection('pair')">GET STARTED</button>
+        
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin-top: 60px; border-top: 1px solid var(--border); padding-top: 40px; width: 100%; max-width: 800px;">
+            <div><h3 style="color: var(--accent); font-size: 2rem; font-family: 'Poppins';">137+</h3><p style="font-size: 0.8rem; color: var(--text-dim);">Core Commands</p></div>
+            <div><h3 style="color: var(--accent); font-size: 2rem; font-family: 'Poppins';">E2EE</h3><p style="font-size: 0.8rem; color: var(--text-dim);">Military Encryption</p></div>
+            <div><h3 style="color: var(--accent); font-size: 2rem; font-family: 'Poppins';">24/7</h3><p style="font-size: 0.8rem; color: var(--text-dim);">Ghost Uptime</p></div>
+        </div>
     </div>
 
     <section id="interface-container" class="hero" style="display:none;">
@@ -164,6 +172,16 @@
             <p id="srv-tag" style="margin-bottom:10px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
             <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px;">Go to WhatsApp > Linked Devices > Link with phone number. Enter the code generated below.</p>
             <input type="tel" id="phone_field">
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; margin-top: 10px;">
+                <label style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
+                    <input type="radio" name="p_sess_type" value="short" checked style="accent-color: var(--accent); margin-right: 5px;"> Short ID
+                </label>
+                <label style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
+                    <input type="radio" name="p_sess_type" value="long" style="accent-color: var(--accent); margin-right: 5px;"> Long ID
+                </label>
+            </div>
+
             <button class="main-btn" onclick="requestPair()">SUBMIT</button>
             <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
             <div id="p-loader" class="spinner"></div>
@@ -180,6 +198,16 @@
             <h3>QR Link</h3>
             <p id="q-srv-tag" style="margin-bottom:10px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
             <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px;">Go to WhatsApp > Linked Devices > Link a Device. Scan the QR code generated below.</p>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <label style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
+                    <input type="radio" name="q_sess_type" value="short" checked style="accent-color: var(--accent); margin-right: 5px;"> Short ID
+                </label>
+                <label style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
+                    <input type="radio" name="q_sess_type" value="long" style="accent-color: var(--accent); margin-right: 5px;"> Long ID
+                </label>
+            </div>
+
             <button class="main-btn" onclick="requestQR()">GENERATE QR</button>
             <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
             <div id="q-loader" class="spinner"></div>
@@ -285,12 +313,13 @@
         async function requestPair() {
             const num = iti.getNumber().replace(/\D/g, '');
             if(num.length < 8) return notify("ERR: Invalid Number", true);
+            const sessType = document.querySelector('input[name="p_sess_type"]:checked').value;
             document.getElementById('p-loader').style.display = 'block';
             try {
                 await fetch(`${currentBaseUrl}/start-pairing`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phoneNumber: num })
+                    body: JSON.stringify({ phoneNumber: num, sessionType: sessType })
                 });
                 notify("Request Sent! Wait for code...");
             } catch(e) { 
@@ -300,12 +329,14 @@
         }
 
         async function requestQR() {
+            const sessType = document.querySelector('input[name="q_sess_type"]:checked').value;
             document.getElementById('q-loader').style.display = 'block';
             notify("Generating QR...");
             try {
                 await fetch(`${currentBaseUrl}/start-qr`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionType: sessType })
                 });
             } catch(e) { 
                 notify("Server Offline", true); 
