@@ -21,6 +21,17 @@
             --text-dim: #a1a1aa;
         }
 
+        /* Light Mode Pink Theme Overrides */
+        body.light-mode {
+            --bg: #fff5f8;
+            --text-main: #2d3436;
+            --text-dim: #636e72;
+            --glass: rgba(255, 255, 255, 0.8);
+            --border: rgba(255, 0, 150, 0.1);
+            --accent: #ff007f;
+            --accent-soft: rgba(255, 0, 150, 0.05);
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
         
         body { 
@@ -37,6 +48,7 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 6%; z-index: 2000;
         }
+        body.light-mode nav { background: rgba(255, 245, 248, 0.8); }
 
         .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
         .brand img { width: 40px; border-radius: 10px; box-shadow: 0 0 20px var(--accent-soft); }
@@ -49,30 +61,38 @@
         }
         .nav-link:hover { color: var(--accent); }
 
-        /* Mobile Hamburger */
         .hamburger { display: none; flex-direction: column; gap: 6px; cursor: pointer; z-index: 2101; }
         .hamburger span { width: 30px; height: 2px; background: var(--accent); border-radius: 10px; }
 
-        /* Mobile Menu Drawer */
         .mobile-drawer {
             position: fixed; top: 0; right: -100%; width: 80%; height: 100vh;
-            background: #080808; border-left: 1px solid var(--border);
+            background: var(--bg); border-left: 1px solid var(--border);
             z-index: 2100; padding: 100px 40px; display: flex; flex-direction: column; gap: 30px;
         }
         .mobile-drawer.open { right: 0; }
-        .mobile-drawer .nav-link { font-size: 1.2rem; }
 
-        /* ━━━━━ HERO SECTION ━━━━━ */
+        /* ━━━━━ MODALS ━━━━━ */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 3000;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--bg); border: 2px solid var(--accent);
+            padding: 40px; border-radius: 30px; width: 90%; max-width: 450px;
+            position: relative; text-align: center;
+        }
+        .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-dim); cursor: pointer; }
+
+        /* ━━━━━ INTERFACE CARDS ━━━━━ */
         .hero { 
             min-height: 100vh; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; text-align: center;
             padding: 100px 10%; background: radial-gradient(circle at center, #111 0%, #050505 100%);
         }
-
+        body.light-mode .hero { background: var(--bg); }
         .hero h1 { font-family: 'Poppins'; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1.1; margin-bottom: 20px; }
-        .hero p { max-width: 600px; color: var(--text-dim); margin-bottom: 40px; font-size: 1rem; }
 
-        /* ━━━━━ INTERFACE CARDS ━━━━━ */
         .interface-card {
             background: var(--glass); border: 1px solid var(--border);
             border-radius: 40px; padding: 50px; width: 100%; max-width: 700px;
@@ -80,65 +100,39 @@
         }
         .interface-card.active { display: block; animation: fadeInUp 0.6s ease-out; }
 
-        /* ━━━━━ DARK PHONE INPUT STYLING ━━━━━ */
+        /* ━━━━━ INPUTS (Styled Black/Pink) ━━━━━ */
         .iti { width: 100%; margin-bottom: 20px; }
-        .iti__country-list { background: #111 !important; border: 1px solid var(--border) !important; color: white !important; }
-        .iti__country:hover { background: var(--accent-soft) !important; }
-        .iti__selected-flag { background: rgba(255,255,255,0.05) !important; border-radius: 15px 0 0 15px; }
-        
+        .iti__country-list { background: #000 !important; color: white; }
         input[type="tel"] { 
-            width: 100% !important; background: rgba(255,255,255,0.05) !important; 
+            width: 100% !important; background: rgba(0,0,0,0.6) !important; 
             border: 1px solid var(--border) !important; color: #fff !important; 
-            padding: 20px !important; border-radius: 15px !important; font-size: 1rem;
+            padding: 20px !important; border-radius: 15px !important;
         }
-        input::placeholder { color: #555 !important; }
-
-        /* ━━━━━ DEPLOYMENT GRID ━━━━━ */
-        .deploy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; width: 100%; }
-        .deploy-card { 
-            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-            padding: 25px; border-radius: 20px; text-align: center; cursor: pointer;
-        }
-        .deploy-card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .deploy-card i { font-size: 2rem; color: var(--accent); margin-bottom: 15px; }
-
-        /* ━━━━━ FAQs ━━━━━ */
-        .faq-container { width: 100%; max-width: 800px; text-align: left; }
-        .faq-item { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; margin-bottom: 10px; overflow: hidden; }
-        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; }
-        .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; color: var(--text-dim); font-size: 0.9rem; }
-        .faq-item.open .faq-answer { padding-bottom: 20px; max-height: 200px; }
 
         /* ━━━━━ BUTTONS ━━━━━ */
         .main-btn { 
             width: 100%; padding: 20px; border-radius: 15px; border: none;
-            background: var(--accent); color: #000; font-weight: 800; cursor: pointer; font-size: 1rem;
+            background: var(--accent); color: #000; font-weight: 800; cursor: pointer;
         }
-        .server-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .server-btn { background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 15px; border-radius: 15px; cursor: pointer; }
-        .server-btn.active { border-color: var(--accent); background: var(--accent-soft); }
+        .server-box {
+            background: var(--glass); border: 1px solid var(--border); padding: 30px;
+            border-radius: 20px; cursor: pointer; margin-bottom: 20px;
+        }
+        .server-box:hover { border-color: var(--accent); }
 
         .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: rotate 1s linear infinite; margin: 20px auto; display: none; }
         @keyframes rotate { to { transform: rotate(360deg); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         footer { padding: 80px 6%; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px; }
-        .footer-col h4 { margin-bottom: 25px; color: var(--accent); letter-spacing: 1px; }
-        .footer-col a { display: block; color: var(--text-dim); text-decoration: none; margin-bottom: 12px; font-size: 0.85rem; }
-
-        @media (max-width: 900px) {
-            .nav-menu { display: none; }
-            .hamburger { display: flex; }
-            .hero h1 { font-size: 2.5rem; }
-            .interface-card { padding: 30px; }
-        }
+        .footer-col h4 { margin-bottom: 25px; color: var(--accent); }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="brand" onclick="location.reload()">
-            <img src="https://img.icons8.com/matrix/50/ff9100/matrix-desktop.png" alt="V-HUB">
+            <img src="https://img.icons8.com/matrix/50/ff9100/matrix-desktop.png" id="main-logo">
             <span>COMRADES-MD</span>
         </div>
         <ul class="nav-menu">
@@ -147,8 +141,7 @@
             <li><a class="nav-link" onclick="showSection('qr')"><i class="fas fa-qrcode"></i> QR Code</a></li>
             <li><a class="nav-link" onclick="showSection('deploy')"><i class="fas fa-rocket"></i> Deploy</a></li>
             <li><a class="nav-link" onclick="showSection('faq')"><i class="fas fa-question-circle"></i> FAQs</a></li>
-            <li><a href="https://github.com/Vinny256/COMRADES-MD-BOT" class="nav-link"><i class="fas fa-code"></i> Source</a></li>
-            <li><a href="https://wa.me/254768666068" class="nav-link"><i class="fas fa-user-shield"></i> Owner</a></li>
+            <li><a class="nav-link" onclick="toggleTheme()"><i class="fas fa-palette"></i> Theme</a></li>
         </ul>
         <div class="hamburger" onclick="toggleMenu()">
             <span></span><span></span><span></span>
@@ -156,103 +149,90 @@
     </nav>
 
     <div class="mobile-drawer" id="drawer">
-        <a class="nav-link" onclick="showSection('hero'); toggleMenu()"><i class="fas fa-home"></i> Home</a>
-        <a class="nav-link" onclick="showSection('pair'); toggleMenu()"><i class="fas fa-key"></i> Pair Code</a>
-        <a class="nav-link" onclick="showSection('qr'); toggleMenu()"><i class="fas fa-qrcode"></i> QR Code</a>
-        <a class="nav-link" onclick="showSection('deploy'); toggleMenu()"><i class="fas fa-rocket"></i> Deploy</a>
-        <a class="nav-link" onclick="showSection('faq'); toggleMenu()"><i class="fas fa-question-circle"></i> FAQs</a>
-        <a href="https://wa.me/254768666068" class="nav-link"><i class="fas fa-headset"></i> Support</a>
+        <a class="nav-link" onclick="showSection('hero'); toggleMenu()">Home</a>
+        <a class="nav-link" onclick="showSection('pair'); toggleMenu()">Pair Code</a>
+        <a class="nav-link" onclick="showSection('qr'); toggleMenu()">QR Code</a>
+        <a class="nav-link" onclick="toggleTheme()">Change Theme</a>
     </div>
 
     <div id="hero-sec" class="hero">
-        <h1>Advanced WhatsApp<br>Bot Solution</h1>
-        <p>The next-generation neural framework for automated commerce, school management, and personal assistance. Experience the power of the Ghost Loader architecture.</p>
-        <button class="main-btn" style="max-width: 300px;" onclick="showSection('pair')">GET STARTED <i class="fas fa-bolt"></i></button>
+        <h1>Ultimate Neural<br>Bot Interface</h1>
+        <p>Deploy the most advanced WhatsApp bot with 137+ commands and Ghost Loader security.</p>
+        <button class="main-btn" style="max-width: 300px;" onclick="showSection('pair')">GET STARTED</button>
     </div>
 
-    <section id="interface-container" class="hero" style="display:none; padding-top: 120px;">
-        
+    <section id="interface-container" class="hero" style="display:none;">
         <div id="pair-card" class="interface-card">
-            <h2>Pairing Code</h2>
-            <p style="color:var(--text-dim); font-size:0.8rem; margin-bottom:30px;">Select server gateway and enter number.</p>
-            <div class="server-grid">
-                <div class="server-btn active" id="ps1" onclick="setServer('p',1)"><h4>SERVER 1</h4><span>Heroku</span></div>
-                <div class="server-btn" id="ps2" onclick="setServer('p',2)"><h4>SERVER 2</h4><span>Render</span></div>
-            </div>
-            <input type="tel" id="phone_field" placeholder="Phone Number">
-            <button class="main-btn" onclick="requestPair()">GENERATE CODE</button>
-            <p style="margin-top:20px; font-size:0.7rem; color:var(--accent); cursor:pointer;" onclick="showSection('qr')">Get QR Code instead?</p>
-            <div id="p-loader" class="spinner"></div>
-            <div id="p-result" style="display:none; margin-top:20px; background:#000; padding:20px; border:2px dashed var(--accent); border-radius:15px; text-align:center;">
-                <div id="p-val" style="font-size:2.5rem; font-weight:800; color:var(--accent); letter-spacing:5px;"></div>
-                <button class="main-btn" style="background:transparent; color:#fff; border:1px solid var(--border); margin-top:10px;" onclick="copy('p-val')">COPY CODE</button>
-            </div>
+            <h2>Select Pair Server</h2>
+            <div class="server-box" onclick="openPairModal(1)"><h4>SERVER 1</h4><p>High Speed Heroku</p></div>
+            <div class="server-box" onclick="openPairModal(2)"><h4>SERVER 2</h4><p>Stable Render</p></div>
+            <p onclick="showSection('qr')" style="color:var(--accent); cursor:pointer;">Use QR Scan instead?</p>
+            <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:#fff;" onclick="showSection('hero')">GO BACK</button>
         </div>
 
         <div id="qr-card" class="interface-card">
-            <h2>QR Scanner</h2>
-            <p style="color:var(--text-dim); font-size:0.8rem; margin-bottom:30px;">Scan using WhatsApp Linked Devices.</p>
-            <div class="server-grid">
-                <div class="server-btn active" id="qs1" onclick="setServer('q',1)"><h4>SERVER 1</h4><span>Heroku</span></div>
-                <div class="server-btn" id="qs2" onclick="setServer('q',2)"><h4>SERVER 2</h4><span>Render</span></div>
-            </div>
-            <button class="main-btn" onclick="requestQR()">GENERATE QR</button>
-            <p style="margin-top:20px; font-size:0.7rem; color:var(--accent); cursor:pointer;" onclick="showSection('pair')">Get Pairing Code instead?</p>
-            <div id="q-loader" class="spinner"></div>
-            <div id="q-holder" style="margin-top:20px;"></div>
+            <h2>Select QR Server</h2>
+            <div class="server-box" onclick="openQRModal(1)"><h4>SERVER 1</h4><p>Heroku Instance</p></div>
+            <div class="server-box" onclick="openQRModal(2)"><h4>SERVER 2</h4><p>Render Instance</p></div>
+            <p onclick="showSection('pair')" style="color:var(--accent); cursor:pointer;">Use Pair Code instead?</p>
+            <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:#fff;" onclick="showSection('hero')">GO BACK</button>
         </div>
 
         <div id="deploy-card" class="interface-card">
-            <h2 style="margin-bottom:30px;">Deployment Hub</h2>
-            <div class="deploy-grid">
-                <div class="deploy-card" onclick="window.open('https://heroku.com/deploy?template=https://github.com/Vinny256/COMRADES-MD-BOT')">
-                    <i class="fas fa-server"></i><h4>HEROKU</h4>
-                </div>
-                <div class="deploy-card" onclick="window.open('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD-BOT')">
-                    <i class="fas fa-cloud"></i><h4>RENDER</h4>
-                </div>
-                <div class="deploy-card" onclick="window.open('https://railway.app/new')">
-                    <i class="fas fa-train"></i><h4>RAILWAY</h4>
-                </div>
-                <div class="deploy-card" onclick="notify('Local Hosting selected. Check Source Code.')">
-                    <i class="fas fa-microchip"></i><h4>VPS/LOCAL</h4>
-                </div>
+            <h2>Deployment Hub</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:30px;">
+                <div class="server-box" onclick="window.open('https://heroku.com/deploy?template=https://github.com/Vinny256/COMRADES-MD-BOT')">Heroku</div>
+                <div class="server-box" onclick="window.open('https://render.com')">Render</div>
+                <div class="server-box" onclick="window.open('https://railway.app')">Railway</div>
+                <div class="server-box" onclick="window.open('https://koyeb.com')">Koyeb</div>
             </div>
         </div>
 
         <div id="faq-card" class="interface-card">
-            <h2 style="margin-bottom:30px;">Frequently Asked Questions</h2>
-            <div class="faq-container" id="faq-list">
-                </div>
+            <h2>FAQs</h2>
+            <div class="faq-container" id="faq-list"></div>
         </div>
-
     </section>
 
+    <div class="modal-overlay" id="pair-modal">
+        <div class="modal-content">
+            <i class="fas fa-times close-modal" onclick="closeModals()"></i>
+            <h3>Pairing Code</h3>
+            <p id="srv-tag" style="margin-bottom:20px; font-size:0.7rem; color:var(--accent);"></p>
+            <input type="tel" id="phone_field">
+            <button class="main-btn" onclick="requestPair()">SUBMIT</button>
+            <button class="main-btn" style="margin-top:10px; background:#444;" onclick="closeModals()">CANCEL</button>
+            <div id="p-loader" class="spinner"></div>
+            <div id="p-result" style="display:none; margin-top:20px;">
+                <h2 id="p-val" style="color:var(--accent); letter-spacing:5px;"></h2>
+                <button class="main-btn" onclick="copy('p-val')">COPY</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="qr-modal">
+        <div class="modal-content">
+            <i class="fas fa-times close-modal" onclick="closeModals()"></i>
+            <h3>QR Link</h3>
+            <p id="q-srv-tag" style="margin-bottom:20px; font-size:0.7rem; color:var(--accent);"></p>
+            <button class="main-btn" onclick="requestQR()">GENERATE QR</button>
+            <button class="main-btn" style="margin-top:10px; background:#444;" onclick="closeModals()">CANCEL</button>
+            <div id="q-loader" class="spinner"></div>
+            <div id="q-holder" style="margin-top:20px;"></div>
+        </div>
+    </div>
+
     <footer>
-        <div class="footer-col">
-            <div class="brand"><span>COMRADES-MD</span></div>
-            <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 15px;">Advanced Neural Bot Interface. Infinite Impact by Vinnie Digital Hub.</p>
-        </div>
-        <div class="footer-col">
-            <h4>PAGES</h4>
-            <a onclick="showSection('hero')">Landing Page</a>
-            <a onclick="showSection('pair')">Pairing Code</a>
-            <a onclick="showSection('qr')">QR Scanner</a>
-            <a onclick="showSection('deploy')">Deploy Bot</a>
-        </div>
-        <div class="footer-col">
-            <h4>LEGAL & HELP</h4>
-            <a onclick="showSection('faq')">FAQs</a>
-            <a href="https://github.com/Vinny256/COMRADES-MD-BOT">Source Code</a>
-            <a href="https://wa.me/254768666068">Support</a>
-        </div>
+        <div class="footer-col"><h4>COMRADES-MD</h4><p>Infinite Impact by Vinnie Digital Hub.</p></div>
+        <div class="footer-col"><h4>PAGES</h4><a onclick="showSection('hero')">Landing</a><a onclick="showSection('pair')">Pairing</a><a onclick="showSection('qr')">QR</a></div>
+        <div class="footer-col"><h4>SUPPORT</h4><a href="https://github.com/Vinny256/COMRADES-MD-BOT">Source Code</a><a href="https://wa.me/254768666068">Contact</a></div>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
-        let currentSrv = "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com";
+        let currentSrv = "";
         const iti = window.intlTelInput(document.querySelector("#phone_field"), {
             separateDialCode: true,
             initialCountry: "auto",
@@ -260,31 +240,31 @@
         });
 
         const faqs = [
-            ["How do I connect?", "Go to Pair Code, enter your number, and link it in WhatsApp Devices."],
-            ["Can I get banned?", "COMRADES-MD uses anti-ban logic, but avoid spamming to stay safe."],
-            ["Is it free?", "Yes, the source code and standard deployment are 100% free."],
-            ["What is Ghost Loader?", "A stealth boot system that keeps the core code encrypted and secure."],
-            ["How do I update?", "Go to your Heroku dashboard and redeploy the latest main branch."],
-            ["Does it work on groups?", "Yes, it supports both private and group command management."],
-            ["Can I change the prefix?", "Yes, set the PREFIX variable in your hosting environment."],
-            ["Supported platforms?", "Heroku, Render, Railway, VPS, and Local Windows/Linux."],
-            ["Session ID expired?", "Generate a new one using the Pair Code section here."],
-            ["Bot not responding?", "Ensure your Heroku dynos are active and your Session ID is valid."],
-            ["Owner number format?", "Always use international format without the + (e.g., 2547...)."],
-            ["Multiple sessions?", "You can run multiple instances with different session IDs."],
-            ["Data security?", "We do not store your data. Everything stays on your server."],
-            ["Media support?", "Yes, supports stickers, audio, video, and documents."],
-            ["AI features?", "Integrated with GPT-based neural logic for smart responses."],
-            ["Can I host on Termux?", "Yes, follow the local installation guide on GitHub."],
-            ["Auto-read status?", "Available in the config settings within the core code."],
-            ["How to contact support?", "Click the Support link in the footer to join our WhatsApp group."],
-            ["What is Vinnie Digital Hub?", "The parent tech agency behind COMRADES-MD elite software."],
-            ["System requirements?", "Node.js v16+ and at least 512MB RAM for smooth workers."]
+            ["Is it safe?", "Yes, it uses end-to-end encryption."],
+            ["Can I get banned?", "Avoid spamming to minimize risk."],
+            ["How do I host?", "Use Heroku or Render via the Deploy tab."],
+            ["Cost?", "Free for personal use."],
+            ["What is Ghost Loader?", "Secure remote code execution."],
+            ["How many commands?", "137+ active commands."],
+            ["Updates?", "Automatic via GitHub sync."],
+            ["Owner?", "Vinnie Digital Hub."],
+            ["Language?", "Built on Node.js."],
+            ["Group support?", "Yes, full group admin control."],
+            ["Stickers?", "Supports high-quality sticker conversion."],
+            ["Audio?", "Includes voice-note and MP3 support."],
+            ["Video?", "Capable of video-to-GIF conversion."],
+            ["Database?", "Uses MongoDB Atlas for storage."],
+            ["Speed?", "Optimized for sub-200ms response."],
+            ["Heroku limit?", "Works within free tier limits."],
+            ["Render limit?", "Compatible with Render free tier."],
+            ["Mobile support?", "Fully responsive web interface."],
+            ["Private chats?", "Works in one-on-one sessions."],
+            ["Auto-read?", "Can be toggled in settings."]
         ];
 
         function initFaqs() {
             const container = document.getElementById('faq-list');
-            faqs.forEach((f, i) => {
+            faqs.forEach(f => {
                 container.innerHTML += `
                 <div class="faq-item" onclick="this.classList.toggle('open')">
                     <div class="faq-question">${f[0]} <i class="fas fa-chevron-down"></i></div>
@@ -294,20 +274,27 @@
         }
 
         function toggleMenu() { document.getElementById('drawer').classList.toggle('open'); }
-
+        function toggleTheme() { document.body.classList.toggle('light-mode'); notify("Theme Toggled"); }
+        function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+        
         function showSection(id) {
             document.getElementById('hero-sec').style.display = id === 'hero' ? 'flex' : 'none';
             document.getElementById('interface-container').style.display = id === 'hero' ? 'none' : 'flex';
             document.querySelectorAll('.interface-card').forEach(c => c.classList.remove('active'));
             document.getElementById(id + '-card').classList.add('active');
-            window.scrollTo(0, 0);
+            window.scrollTo(0,0);
         }
 
-        function setServer(p, id) {
-            document.querySelectorAll(`.${p}s`).forEach(b => b.classList.remove('active'));
-            document.getElementById(p + 's' + id).classList.add('active');
+        function openPairModal(id) {
             currentSrv = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://your-render-url.com";
-            notify("Server Gateway " + id + " Active");
+            document.getElementById('srv-tag').innerText = "USING SERVER " + id;
+            document.getElementById('pair-modal').style.display = 'flex';
+        }
+
+        function openQRModal(id) {
+            currentSrv = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://your-render-url.com";
+            document.getElementById('q-srv-tag').innerText = "USING SERVER " + id;
+            document.getElementById('qr-modal').style.display = 'flex';
         }
 
         async function requestPair() {
@@ -319,13 +306,20 @@
                 const data = await res.json();
                 document.getElementById('p-val').innerText = data.code;
                 document.getElementById('p-result').style.display = 'block';
-                notify("Pairing Code Synchronized");
-            } catch(e) { notify("Backend Offline", true); }
+                notify("Connected!");
+            } catch(e) { notify("Offline", true); }
             document.getElementById('p-loader').style.display = 'none';
         }
 
-        function notify(m, e=false) { Toastify({ text: m, style: { background: e ? "#ff4444" : "#ff9100", color: "#fff", borderRadius: "12px" } }).showToast(); }
-        function copy(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); notify("Copied to Vault"); }
+        async function requestQR() {
+            document.getElementById('q-loader').style.display = 'block';
+            notify("Fetching QR...");
+            // Logic for QR fetch here
+            document.getElementById('q-loader').style.display = 'none';
+        }
+
+        function notify(m, e=false) { Toastify({ text: m, style: { background: e ? "#ff4444" : var(--accent) } }).showToast(); }
+        function copy(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); notify("Copied!"); }
         
         initFaqs();
     </script>
