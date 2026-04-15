@@ -21,7 +21,6 @@
             --text-dim: #a1a1aa;
         }
 
-        /* Light Mode Pink Theme Overrides */
         body.light-mode {
             --bg: #fff5f8;
             --text-main: #2d3436;
@@ -33,21 +32,9 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
-        
-        body { 
-            background: var(--bg); color: var(--text-main); 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            overflow-x: hidden; line-height: 1.6;
-        }
+        body { background: var(--bg); color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; line-height: 1.6; }
 
-        /* ━━━━━ NAVIGATION ━━━━━ */
-        nav {
-            position: fixed; top: 0; width: 100%; height: 80px;
-            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 6%; z-index: 2000;
-        }
+        nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 6%; z-index: 2000; }
         body.light-mode nav { background: rgba(255, 245, 248, 0.8); }
 
         .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
@@ -55,70 +42,38 @@
         .brand span { font-family: 'Poppins'; font-size: 1.3rem; letter-spacing: -0.5px; }
 
         .nav-menu { display: flex; gap: 25px; list-style: none; align-items: center; }
-        .nav-link { 
-            color: var(--text-dim); text-decoration: none; font-size: 0.8rem; font-weight: 600;
-            display: flex; align-items: center; gap: 8px; cursor: pointer;
-        }
+        .nav-link { color: var(--text-dim); text-decoration: none; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; }
         .nav-link:hover { color: var(--accent); }
 
         .hamburger { display: none; flex-direction: column; gap: 6px; cursor: pointer; z-index: 2101; }
         .hamburger span { width: 30px; height: 2px; background: var(--accent); border-radius: 10px; }
 
-        .mobile-drawer {
-            position: fixed; top: 0; right: -100%; width: 80%; height: 100vh;
-            background: var(--bg); border-left: 1px solid var(--border);
-            z-index: 2100; padding: 100px 40px; display: flex; flex-direction: column; gap: 30px;
-        }
+        .mobile-drawer { position: fixed; top: 0; right: -100%; width: 80%; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); z-index: 2100; padding: 100px 40px; display: flex; flex-direction: column; gap: 30px; }
         .mobile-drawer.open { right: 0; }
 
-        /* ━━━━━ MODALS ━━━━━ */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 3000;
-            justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background: var(--bg); border: 2px solid var(--accent);
-            padding: 40px; border-radius: 30px; width: 90%; max-width: 450px;
-            position: relative; text-align: center;
-        }
-        .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-dim); cursor: pointer; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 3000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--bg); border: 2px solid var(--accent); padding: 40px; border-radius: 30px; width: 90%; max-width: 450px; position: relative; text-align: center; }
+        .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-dim); cursor: pointer; font-size: 1.5rem; }
 
-        /* ━━━━━ INTERFACE CARDS ━━━━━ */
-        .hero { 
-            min-height: 100vh; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; text-align: center;
-            padding: 100px 10%; background: radial-gradient(circle at center, #111 0%, #050505 100%);
-        }
+        .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 10%; background: radial-gradient(circle at center, #111 0%, #050505 100%); }
         body.light-mode .hero { background: var(--bg); }
         .hero h1 { font-family: 'Poppins'; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1.1; margin-bottom: 20px; }
 
-        .interface-card {
-            background: var(--glass); border: 1px solid var(--border);
-            border-radius: 40px; padding: 50px; width: 100%; max-width: 700px;
-            backdrop-filter: blur(40px); display: none; margin: 40px 0;
-        }
+        .interface-card { background: var(--glass); border: 1px solid var(--border); border-radius: 40px; padding: 50px; width: 100%; max-width: 700px; backdrop-filter: blur(40px); display: none; margin: 40px 0; }
         .interface-card.active { display: block; animation: fadeInUp 0.6s ease-out; }
 
-        /* ━━━━━ INPUTS (Styled Black/Pink) ━━━━━ */
         .iti { width: 100%; margin-bottom: 20px; }
         .iti__country-list { background: #000 !important; color: white; }
-        input[type="tel"] { 
-            width: 100% !important; background: rgba(0,0,0,0.6) !important; 
-            border: 1px solid var(--border) !important; color: #fff !important; 
-            padding: 20px !important; border-radius: 15px !important;
-        }
+        input[type="tel"] { width: 100% !important; background: rgba(0,0,0,0.6) !important; border: 1px solid var(--border) !important; color: #fff !important; padding: 20px !important; border-radius: 15px !important; }
 
-        /* ━━━━━ BUTTONS ━━━━━ */
-        .main-btn { 
-            width: 100%; padding: 20px; border-radius: 15px; border: none;
-            background: var(--accent); color: #000; font-weight: 800; cursor: pointer;
-        }
-        .server-box {
-            background: var(--glass); border: 1px solid var(--border); padding: 30px;
-            border-radius: 20px; cursor: pointer; margin-bottom: 20px;
-        }
-        .server-box:hover { border-color: var(--accent); }
+        .main-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: #000; font-weight: 800; cursor: pointer; }
+        .server-box { background: var(--glass); border: 1px solid var(--border); padding: 30px; border-radius: 20px; cursor: pointer; margin-bottom: 20px; }
+        .server-box:hover { border-color: var(--accent); transform: translateY(-3px); }
+
+        .faq-item { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; margin-bottom: 10px; overflow: hidden; text-align: left; }
+        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; }
+        .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; color: var(--text-dim); }
+        .faq-item.open .faq-answer { padding-bottom: 20px; max-height: 200px; }
 
         .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: rotate 1s linear infinite; margin: 20px auto; display: none; }
         @keyframes rotate { to { transform: rotate(360deg); } }
@@ -126,38 +81,38 @@
 
         footer { padding: 80px 6%; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px; }
         .footer-col h4 { margin-bottom: 25px; color: var(--accent); }
+
+        @media (max-width: 900px) { .nav-menu { display: none; } .hamburger { display: flex; } .hero h1 { font-size: 2.5rem; } }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="brand" onclick="location.reload()">
-            <img src="https://img.icons8.com/matrix/50/ff9100/matrix-desktop.png" id="main-logo">
+            <img src="https://img.icons8.com/matrix/50/ff9100/matrix-desktop.png">
             <span>COMRADES-MD</span>
         </div>
         <ul class="nav-menu">
-            <li><a class="nav-link" onclick="showSection('hero')"><i class="fas fa-home"></i> Home</a></li>
-            <li><a class="nav-link" onclick="showSection('pair')"><i class="fas fa-key"></i> Pair Code</a></li>
-            <li><a class="nav-link" onclick="showSection('qr')"><i class="fas fa-qrcode"></i> QR Code</a></li>
-            <li><a class="nav-link" onclick="showSection('deploy')"><i class="fas fa-rocket"></i> Deploy</a></li>
-            <li><a class="nav-link" onclick="showSection('faq')"><i class="fas fa-question-circle"></i> FAQs</a></li>
+            <li><a class="nav-link" onclick="showSection('hero')">Home</a></li>
+            <li><a class="nav-link" onclick="showSection('pair')">Pair Code</a></li>
+            <li><a class="nav-link" onclick="showSection('qr')">QR Code</a></li>
+            <li><a class="nav-link" onclick="showSection('deploy')">Deploy</a></li>
+            <li><a class="nav-link" onclick="showSection('faq')">FAQs</a></li>
             <li><a class="nav-link" onclick="toggleTheme()"><i class="fas fa-palette"></i> Theme</a></li>
         </ul>
-        <div class="hamburger" onclick="toggleMenu()">
-            <span></span><span></span><span></span>
-        </div>
+        <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
     </nav>
 
     <div class="mobile-drawer" id="drawer">
         <a class="nav-link" onclick="showSection('hero'); toggleMenu()">Home</a>
         <a class="nav-link" onclick="showSection('pair'); toggleMenu()">Pair Code</a>
         <a class="nav-link" onclick="showSection('qr'); toggleMenu()">QR Code</a>
-        <a class="nav-link" onclick="toggleTheme()">Change Theme</a>
+        <a class="nav-link" onclick="toggleTheme(); toggleMenu()">Change Theme</a>
     </div>
 
     <div id="hero-sec" class="hero">
         <h1>Ultimate Neural<br>Bot Interface</h1>
-        <p>Deploy the most advanced WhatsApp bot with 137+ commands and Ghost Loader security.</p>
+        <p>Advanced WhatsApp automation with Ghost Loader security. Infinite Impact by Vinnie Digital Hub.</p>
         <button class="main-btn" style="max-width: 300px;" onclick="showSection('pair')">GET STARTED</button>
     </div>
 
@@ -166,16 +121,16 @@
             <h2>Select Pair Server</h2>
             <div class="server-box" onclick="openPairModal(1)"><h4>SERVER 1</h4><p>High Speed Heroku</p></div>
             <div class="server-box" onclick="openPairModal(2)"><h4>SERVER 2</h4><p>Stable Render</p></div>
-            <p onclick="showSection('qr')" style="color:var(--accent); cursor:pointer;">Use QR Scan instead?</p>
-            <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:#fff;" onclick="showSection('hero')">GO BACK</button>
+            <p onclick="showSection('qr')" style="color:var(--accent); cursor:pointer; margin-top:20px;">Scan QR instead?</p>
+            <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:var(--text-main);" onclick="showSection('hero')">GO BACK</button>
         </div>
 
         <div id="qr-card" class="interface-card">
             <h2>Select QR Server</h2>
             <div class="server-box" onclick="openQRModal(1)"><h4>SERVER 1</h4><p>Heroku Instance</p></div>
             <div class="server-box" onclick="openQRModal(2)"><h4>SERVER 2</h4><p>Render Instance</p></div>
-            <p onclick="showSection('pair')" style="color:var(--accent); cursor:pointer;">Use Pair Code instead?</p>
-            <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:#fff;" onclick="showSection('hero')">GO BACK</button>
+            <p onclick="showSection('pair')" style="color:var(--accent); cursor:pointer; margin-top:20px;">Use Pair Code instead?</p>
+            <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:var(--text-main);" onclick="showSection('hero')">GO BACK</button>
         </div>
 
         <div id="deploy-card" class="interface-card">
@@ -186,11 +141,13 @@
                 <div class="server-box" onclick="window.open('https://railway.app')">Railway</div>
                 <div class="server-box" onclick="window.open('https://koyeb.com')">Koyeb</div>
             </div>
+            <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:var(--text-main);" onclick="showSection('hero')">GO BACK</button>
         </div>
 
         <div id="faq-card" class="interface-card">
-            <h2>FAQs</h2>
-            <div class="faq-container" id="faq-list"></div>
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-container" id="faq-list" style="margin-top:30px;"></div>
+            <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:var(--text-main);" onclick="showSection('hero')">GO BACK</button>
         </div>
     </section>
 
@@ -198,10 +155,10 @@
         <div class="modal-content">
             <i class="fas fa-times close-modal" onclick="closeModals()"></i>
             <h3>Pairing Code</h3>
-            <p id="srv-tag" style="margin-bottom:20px; font-size:0.7rem; color:var(--accent);"></p>
+            <p id="srv-tag" style="margin-bottom:20px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
             <input type="tel" id="phone_field">
             <button class="main-btn" onclick="requestPair()">SUBMIT</button>
-            <button class="main-btn" style="margin-top:10px; background:#444;" onclick="closeModals()">CANCEL</button>
+            <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
             <div id="p-loader" class="spinner"></div>
             <div id="p-result" style="display:none; margin-top:20px;">
                 <h2 id="p-val" style="color:var(--accent); letter-spacing:5px;"></h2>
@@ -214,9 +171,9 @@
         <div class="modal-content">
             <i class="fas fa-times close-modal" onclick="closeModals()"></i>
             <h3>QR Link</h3>
-            <p id="q-srv-tag" style="margin-bottom:20px; font-size:0.7rem; color:var(--accent);"></p>
+            <p id="q-srv-tag" style="margin-bottom:20px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
             <button class="main-btn" onclick="requestQR()">GENERATE QR</button>
-            <button class="main-btn" style="margin-top:10px; background:#444;" onclick="closeModals()">CANCEL</button>
+            <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
             <div id="q-loader" class="spinner"></div>
             <div id="q-holder" style="margin-top:20px;"></div>
         </div>
@@ -235,35 +192,23 @@
         let currentSrv = "";
         const iti = window.intlTelInput(document.querySelector("#phone_field"), {
             separateDialCode: true,
-            initialCountry: "auto",
-            geoIpLookup: callback => fetch("https://ipapi.co/json").then(res => res.json()).then(data => callback(data.country_code))
+            initialCountry: "ke",
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
         });
 
         const faqs = [
-            ["Is it safe?", "Yes, it uses end-to-end encryption."],
-            ["Can I get banned?", "Avoid spamming to minimize risk."],
-            ["How do I host?", "Use Heroku or Render via the Deploy tab."],
-            ["Cost?", "Free for personal use."],
-            ["What is Ghost Loader?", "Secure remote code execution."],
-            ["How many commands?", "137+ active commands."],
-            ["Updates?", "Automatic via GitHub sync."],
-            ["Owner?", "Vinnie Digital Hub."],
-            ["Language?", "Built on Node.js."],
-            ["Group support?", "Yes, full group admin control."],
-            ["Stickers?", "Supports high-quality sticker conversion."],
-            ["Audio?", "Includes voice-note and MP3 support."],
-            ["Video?", "Capable of video-to-GIF conversion."],
-            ["Database?", "Uses MongoDB Atlas for storage."],
-            ["Speed?", "Optimized for sub-200ms response."],
-            ["Heroku limit?", "Works within free tier limits."],
-            ["Render limit?", "Compatible with Render free tier."],
-            ["Mobile support?", "Fully responsive web interface."],
-            ["Private chats?", "Works in one-on-one sessions."],
-            ["Auto-read?", "Can be toggled in settings."]
+            ["How do I connect?", "Go to Pair Code, select a server, enter your number, and link it in WhatsApp Devices."],
+            ["Can I get banned?", "Avoid spamming and use a secondary number to minimize risk."],
+            ["Is it free?", "Yes, the bot is free. Hosting costs depend on your provider."],
+            ["What is Ghost Loader?", "A secure remote execution system for core bot commands."],
+            ["How to update?", "Redeploy your hosting instance using the latest GitHub source."],
+            ["Supports groups?", "Yes, includes full admin and group management tools."],
+            ["Supported platforms?", "Heroku, Render, Railway, VPS, and Local machines."]
         ];
 
         function initFaqs() {
             const container = document.getElementById('faq-list');
+            if(!container) return;
             faqs.forEach(f => {
                 container.innerHTML += `
                 <div class="faq-item" onclick="this.classList.toggle('open')">
@@ -281,19 +226,20 @@
             document.getElementById('hero-sec').style.display = id === 'hero' ? 'flex' : 'none';
             document.getElementById('interface-container').style.display = id === 'hero' ? 'none' : 'flex';
             document.querySelectorAll('.interface-card').forEach(c => c.classList.remove('active'));
-            document.getElementById(id + '-card').classList.add('active');
+            const target = document.getElementById(id + '-card');
+            if(target) target.classList.add('active');
             window.scrollTo(0,0);
         }
 
         function openPairModal(id) {
             currentSrv = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://your-render-url.com";
-            document.getElementById('srv-tag').innerText = "USING SERVER " + id;
+            document.getElementById('srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('pair-modal').style.display = 'flex';
         }
 
         function openQRModal(id) {
             currentSrv = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://your-render-url.com";
-            document.getElementById('q-srv-tag').innerText = "USING SERVER " + id;
+            document.getElementById('q-srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('qr-modal').style.display = 'flex';
         }
 
@@ -314,14 +260,20 @@
         async function requestQR() {
             document.getElementById('q-loader').style.display = 'block';
             notify("Fetching QR...");
-            // Logic for QR fetch here
-            document.getElementById('q-loader').style.display = 'none';
+            setTimeout(() => { document.getElementById('q-loader').style.display = 'none'; notify("QR Offline", true); }, 2000);
         }
 
-        function notify(m, e=false) { Toastify({ text: m, style: { background: e ? "#ff4444" : var(--accent) } }).showToast(); }
-        function copy(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); notify("Copied!"); }
+        function notify(m, e=false) { 
+            const color = e ? "#ff4444" : getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+            Toastify({ text: m, style: { background: color, color: "#fff", borderRadius: "12px" } }).showToast(); 
+        }
+
+        function copy(id) { 
+            navigator.clipboard.writeText(document.getElementById(id).innerText); 
+            notify("Copied!"); 
+        }
         
-        initFaqs();
+        window.onload = initFaqs;
     </script>
 </body>
 </html>
