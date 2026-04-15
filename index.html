@@ -274,7 +274,7 @@
             const statusArea = document.getElementById('fork-status-area');
             statusArea.innerHTML = "Checking...";
             try {
-                const res = await fetch(`https://api.github.com/repos/Vinny256/COMRADES-MD/forks`);
+                const res = await fetch(`https://api.github.com/repos/Vinny256/COMRADES-MD-BOT/forks`);
                 const forks = await res.json();
                 const found = forks.some(f => f.owner.login.toLowerCase() === user.toLowerCase());
                 if(found) {
