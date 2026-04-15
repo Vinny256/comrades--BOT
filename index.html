@@ -516,12 +516,14 @@
                     const timer = setInterval(() => {
                         statusArea.innerHTML = `WOW REPO FORKED! Redirecting in ${count}s...`;
                         count--;
-                        if(count < 0) { clearInterval(timer); window.open(pendingUrl); closeModals(); }
+                        // 🚀 THE FIX: window.location.href instead of window.open bypasses the strict popup blocker
+                        if(count < 0) { clearInterval(timer); window.location.href = pendingUrl; closeModals(); }
                     }, 1000);
                 } else {
                     statusArea.style.color = "#ff4444";
                     statusArea.innerHTML = `<i class="fas fa-sad-tear fa-3x" style="display:block; margin-bottom:10px;"></i> You have not forked repo!`;
-                    setTimeout(() => window.open('https://github.com/Vinny256/COMRADES-MD-BOT/fork'), 2500);
+                    // 🚀 THE FIX: window.location.href bypasses the popup blocker here too
+                    setTimeout(() => window.location.href = 'https://github.com/Vinny256/COMRADES-MD-BOT/fork', 2500);
                 }
             } catch(e) { notify("Verification Error", true); }
         }
