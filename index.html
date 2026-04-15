@@ -55,7 +55,7 @@
         .modal-content { background: var(--bg); border: 2px solid var(--accent); padding: 40px; border-radius: 30px; width: 90%; max-width: 450px; position: relative; text-align: center; }
         .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-dim); cursor: pointer; font-size: 1.5rem; }
 
-        .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 10%; background: radial-gradient(circle at center, #111 0%, #050505 100%); }
+        .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 10%; background: radial-gradient(circle at center, rgba(17,17,17,0.5) 0%, rgba(5,5,5,1) 100%); position: relative; z-index: 1;}
         body.light-mode .hero { background: var(--bg); }
         .hero h1 { font-family: 'Poppins'; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1.1; margin-bottom: 20px; }
 
@@ -66,8 +66,8 @@
         .iti__country-list { background: #000 !important; color: white !important; }
         input[type="tel"] { width: 100% !important; background: rgba(0,0,0,0.6) !important; border: 1px solid var(--border) !important; color: #fff !important; padding: 20px 20px 20px 95px !important; border-radius: 15px !important; }
 
-        .main-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: #000; font-weight: 800; cursor: pointer; }
-        .server-box { background: var(--glass); border: 1px solid var(--border); padding: 30px; border-radius: 20px; cursor: pointer; margin-bottom: 20px; }
+        .main-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: #000; font-weight: 800; cursor: pointer; position: relative; overflow: hidden; }
+        .server-box { background: var(--glass); border: 1px solid var(--border); padding: 30px; border-radius: 20px; cursor: pointer; margin-bottom: 20px; position: relative; overflow: hidden; }
         .server-box:hover { border-color: var(--accent); transform: translateY(-3px); }
 
         .faq-item { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; margin-bottom: 10px; overflow: hidden; text-align: left; }
@@ -86,13 +86,18 @@
 
         @media (max-width: 900px) { .nav-menu { display: none; } .hamburger { display: flex; } .hero h1 { font-size: 2.5rem; } }
 
-        /* ━━━━━ 🚀 NEW ANIMATION ENGINE ADDED BELOW ━━━━━ */
+        /* ━━━━━ 🚀 ADVANCED ANIMATION ENGINE ━━━━━ */
+        
+        /* Fixed Invisible Button Conflict */
         @keyframes pulse-call {
             0% { box-shadow: 0 0 0 0 var(--accent); transform: scale(1); }
             50% { box-shadow: 0 0 25px 8px var(--accent-soft); transform: scale(1.03); }
             100% { box-shadow: 0 0 0 0 var(--accent); transform: scale(1); }
         }
-        .call-action { animation: pulse-call 2s infinite cubic-bezier(0.66, 0, 0, 1) !important; }
+        .call-action { 
+            animation: pulse-call 2s infinite cubic-bezier(0.66, 0, 0, 1) !important; 
+            opacity: 1 !important; /* Overrides the 0 opacity from popIn so it's visible */
+        }
 
         @keyframes popIn {
             0% { opacity: 0; transform: translateY(30px) scale(0.95); }
@@ -125,10 +130,27 @@
             to { opacity: 1; transform: scale(1); }
         }
         .modal-content { animation: modalFadeIn 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+
+        /* Button Click Ripple Effect */
+        .ripple-eff {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes rippleAnim {
+            to { transform: scale(4); opacity: 0; }
+        }
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
     </style>
 </head>
 <body>
+
+    <canvas id="particles-bg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.8;"></canvas>
+    
+    <div id="cursor-glow" style="position: fixed; width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,145,0,0.08) 0%, transparent 60%); border-radius: 50%; pointer-events: none; z-index: -1; transform: translate(-50%, -50%); transition: opacity 0.2s ease; display: none;"></div>
 
     <nav>
         <div class="brand" onclick="location.reload()">
@@ -162,8 +184,11 @@
     <div id="hero-sec" class="hero">
         <h1 class="animate-pop delay-1">Ultimate Neural<br>Bot Interface</h1>
         <p class="animate-pop delay-2">Advanced WhatsApp automation with Ghost Loader security. Infinite Impact by Vinnie Digital Hub.</p>
-        <button class="main-btn call-action animate-pop delay-3" style="max-width: 300px;" onclick="showSection('pair')">GET STARTED</button>
         
+        <div class="animate-pop delay-3" style="width: 100%; max-width: 300px;">
+            <button class="main-btn call-action" onclick="showSection('pair')">GET STARTED</button>
+        </div>
+
         <div class="animate-pop delay-4" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin-top: 60px; border-top: 1px solid var(--border); padding-top: 40px; width: 100%; max-width: 800px;">
             <div><h3 style="color: var(--accent); font-size: 2rem; font-family: 'Poppins';">137+</h3><p style="font-size: 0.8rem; color: var(--text-dim);">Core Commands</p></div>
             <div><h3 style="color: var(--accent); font-size: 2rem; font-family: 'Poppins';">E2EE</h3><p style="font-size: 0.8rem; color: var(--text-dim);">Military Encryption</p></div>
@@ -323,7 +348,6 @@
             if(target) target.classList.add('active');
             window.scrollTo(0,0);
             
-            // Re-trigger hero animations smoothly
             if(id === 'hero') {
                 const heroEl = document.getElementById('hero-sec');
                 heroEl.style.animation = 'none';
@@ -436,6 +460,65 @@
         }
 
         function copy(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); notify("Copied!"); }
+
+        /* ✨ ENGINE MODULES: RIPPLES, CURSOR, AND STARS ✨ */
+        
+        // 1. The Interactive Cursor Glow
+        const cursorGlow = document.getElementById('cursor-glow');
+        if (window.matchMedia("(pointer: fine)").matches) {
+            cursorGlow.style.display = "block";
+            document.addEventListener('mousemove', (e) => {
+                cursorGlow.style.left = e.clientX + 'px';
+                cursorGlow.style.top = e.clientY + 'px';
+            });
+        }
+
+        // 2. The Button Ripple Effect
+        document.querySelectorAll('.main-btn, .server-box').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                let ripple = document.createElement('span');
+                ripple.classList.add('ripple-eff');
+                this.appendChild(ripple);
+                let rect = this.getBoundingClientRect();
+                let size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = e.clientX - rect.left - size/2 + 'px';
+                ripple.style.top = e.clientY - rect.top - size/2 + 'px';
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // 3. The Flowing Starfield Particle Background
+        const canvas = document.getElementById('particles-bg');
+        const ctx = canvas.getContext('2d');
+        let w = canvas.width = window.innerWidth;
+        let h = canvas.height = window.innerHeight;
+        let particles = [];
+        
+        for(let i=0; i<70; i++) {
+            particles.push({
+                x: Math.random() * w, y: Math.random() * h,
+                r: Math.random() * 2, v: Math.random() * 0.5 + 0.2
+            });
+        }
+        
+        function draw() {
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+            particles.forEach(p => {
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+                p.y -= p.v;
+                if(p.y < -10) p.y = h + 10;
+            });
+            requestAnimationFrame(draw);
+        }
+        draw();
+        
+        window.addEventListener('resize', () => { 
+            w = canvas.width = window.innerWidth; 
+            h = canvas.height = window.innerHeight; 
+        });
+
         window.onload = initFaqs;
     </script>
 </body>
