@@ -400,7 +400,7 @@
             currentSrvType = "pairing";
             document.getElementById('srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('pair-modal').style.display = 'flex';
-            initSocket(currentBaseUrl);
+            // 🚀 Socket connection removed from here to prevent ghost requests!
         }
 
         function openQRModal(id) {
@@ -408,7 +408,7 @@
             currentSrvType = "qr";
             document.getElementById('q-srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('qr-modal').style.display = 'flex';
-            initSocket(currentBaseUrl);
+            // 🚀 Socket connection removed from here to prevent ghost requests!
         }
 
         function initSocket(url) {
@@ -443,13 +443,15 @@
             const num = iti.getNumber().replace(/\D/g, '');
             if(num.length < 8) return notify("ERR: Invalid Number", true);
             
-            // 🚀 UPGRADED: Absolute targeted selection to bypass browser quirks
             const sessType = document.getElementById('p_long').checked ? 'long' : 'short';
             
             const btn = document.getElementById('p-submit-btn');
             btn.disabled = true;
             btn.innerText = 'REQUESTING...';
             document.getElementById('p-loader').style.display = 'block';
+            
+            // 🚀 INJECTED: Connect socket ONLY when user initiates the request!
+            initSocket(currentBaseUrl);
             
             try {
                 await fetch(`${currentBaseUrl}/start-pairing`, {
@@ -467,13 +469,15 @@
         }
 
         async function requestQR() {
-            // 🚀 UPGRADED: Absolute targeted selection to bypass browser quirks
             const sessType = document.getElementById('q_long').checked ? 'long' : 'short';
             
             const btn = document.getElementById('q-submit-btn');
             btn.disabled = true;
             btn.innerText = 'GENERATING...';
             document.getElementById('q-loader').style.display = 'block';
+            
+            // 🚀 INJECTED: Connect socket ONLY when user initiates the request!
+            initSocket(currentBaseUrl);
             
             notify("Generating QR...");
             try {
