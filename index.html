@@ -42,33 +42,32 @@
         .brand img { width: 40px; border-radius: 10px; box-shadow: 0 0 20px var(--accent-soft); }
         .brand span { font-family: 'Poppins'; font-size: 1.3rem; letter-spacing: -0.5px; }
 
-        .nav-menu { display: flex; gap: 30px; list-style: none; align-items: center; }
+        .nav-menu { display: flex; gap: 25px; list-style: none; align-items: center; }
         .nav-link { 
-            color: var(--text-dim); text-decoration: none; font-size: 0.85rem; font-weight: 600;
-            display: flex; align-items: center; gap: 8px;
+            color: var(--text-dim); text-decoration: none; font-size: 0.8rem; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
         }
         .nav-link:hover { color: var(--accent); }
-        
-        .btn-cta { 
-            background: var(--accent); color: #000; padding: 10px 24px; 
-            border-radius: 50px; text-decoration: none; font-weight: 800; font-size: 0.8rem;
-            box-shadow: 0 10px 20px var(--accent-soft);
+
+        /* Mobile Hamburger */
+        .hamburger { display: none; flex-direction: column; gap: 6px; cursor: pointer; z-index: 2101; }
+        .hamburger span { width: 30px; height: 2px; background: var(--accent); border-radius: 10px; }
+
+        /* Mobile Menu Drawer */
+        .mobile-drawer {
+            position: fixed; top: 0; right: -100%; width: 80%; height: 100vh;
+            background: #080808; border-left: 1px solid var(--border);
+            z-index: 2100; padding: 100px 40px; display: flex; flex-direction: column; gap: 30px;
         }
+        .mobile-drawer.open { right: 0; }
+        .mobile-drawer .nav-link { font-size: 1.2rem; }
 
         /* ━━━━━ HERO SECTION ━━━━━ */
         .hero { 
             min-height: 100vh; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; text-align: center;
-            padding: 0 10%; background: radial-gradient(circle at center, #111 0%, #050505 100%);
+            padding: 100px 10%; background: radial-gradient(circle at center, #111 0%, #050505 100%);
         }
-
-        .status-badge {
-            background: rgba(34, 197, 94, 0.1); color: #22c55e;
-            padding: 6px 16px; border-radius: 50px; font-size: 0.7rem; font-weight: 800;
-            margin-bottom: 30px; border: 1px solid rgba(34, 197, 94, 0.2);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
 
         .hero h1 { font-family: 'Poppins'; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1.1; margin-bottom: 20px; }
         .hero p { max-width: 600px; color: var(--text-dim); margin-bottom: 40px; font-size: 1rem; }
@@ -76,53 +75,62 @@
         /* ━━━━━ INTERFACE CARDS ━━━━━ */
         .interface-card {
             background: var(--glass); border: 1px solid var(--border);
-            border-radius: 30px; padding: 40px; width: 100%; max-width: 550px;
-            backdrop-filter: blur(40px); display: none;
+            border-radius: 40px; padding: 50px; width: 100%; max-width: 700px;
+            backdrop-filter: blur(40px); display: none; margin: 40px 0;
         }
         .interface-card.active { display: block; animation: fadeInUp 0.6s ease-out; }
 
-        /* ━━━━━ SERVER SELECTOR ━━━━━ */
-        .server-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
-        .server-btn { 
-            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-            padding: 15px; border-radius: 15px; cursor: pointer; text-align: left;
-        }
-        .server-btn.active { border-color: var(--accent); background: var(--accent-soft); }
-        .server-btn h4 { font-size: 0.8rem; margin-bottom: 4px; }
-        .server-btn span { font-size: 0.65rem; color: var(--text-dim); }
-
-        /* ━━━━━ INPUTS & BUTTONS ━━━━━ */
+        /* ━━━━━ DARK PHONE INPUT STYLING ━━━━━ */
         .iti { width: 100%; margin-bottom: 20px; }
+        .iti__country-list { background: #111 !important; border: 1px solid var(--border) !important; color: white !important; }
+        .iti__country:hover { background: var(--accent-soft) !important; }
+        .iti__selected-flag { background: rgba(255,255,255,0.05) !important; border-radius: 15px 0 0 15px; }
+        
         input[type="tel"] { 
-            width: 100% !important; background: rgba(0,0,0,0.3) !important; 
+            width: 100% !important; background: rgba(255,255,255,0.05) !important; 
             border: 1px solid var(--border) !important; color: #fff !important; 
-            padding: 18px !important; border-radius: 15px !important; 
+            padding: 20px !important; border-radius: 15px !important; font-size: 1rem;
         }
+        input::placeholder { color: #555 !important; }
 
+        /* ━━━━━ DEPLOYMENT GRID ━━━━━ */
+        .deploy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; width: 100%; }
+        .deploy-card { 
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            padding: 25px; border-radius: 20px; text-align: center; cursor: pointer;
+        }
+        .deploy-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .deploy-card i { font-size: 2rem; color: var(--accent); margin-bottom: 15px; }
+
+        /* ━━━━━ FAQs ━━━━━ */
+        .faq-container { width: 100%; max-width: 800px; text-align: left; }
+        .faq-item { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; margin-bottom: 10px; overflow: hidden; }
+        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; }
+        .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; color: var(--text-dim); font-size: 0.9rem; }
+        .faq-item.open .faq-answer { padding-bottom: 20px; max-height: 200px; }
+
+        /* ━━━━━ BUTTONS ━━━━━ */
         .main-btn { 
-            width: 100%; padding: 18px; border-radius: 15px; border: none;
-            background: var(--accent); color: #000; font-weight: 800; cursor: pointer;
+            width: 100%; padding: 20px; border-radius: 15px; border: none;
+            background: var(--accent); color: #000; font-weight: 800; cursor: pointer; font-size: 1rem;
         }
+        .server-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .server-btn { background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 15px; border-radius: 15px; cursor: pointer; }
+        .server-btn.active { border-color: var(--accent); background: var(--accent-soft); }
 
-        /* ━━━━━ LOADER ━━━━━ */
-        .loader-overlay { display: none; margin-top: 20px; }
-        .spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: rotate 1s linear infinite; margin: 0 auto; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: rotate 1s linear infinite; margin: 20px auto; display: none; }
         @keyframes rotate { to { transform: rotate(360deg); } }
-
-        /* ━━━━━ FOOTER ━━━━━ */
-        footer { 
-            padding: 60px 6%; border-top: 1px solid var(--border); 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;
-        }
-        .footer-col h4 { margin-bottom: 20px; font-size: 0.9rem; color: var(--accent); }
-        .footer-col a { display: block; color: var(--text-dim); text-decoration: none; margin-bottom: 10px; font-size: 0.8rem; }
-        .footer-col a:hover { color: var(--accent); }
-
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
+        footer { padding: 80px 6%; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px; }
+        .footer-col h4 { margin-bottom: 25px; color: var(--accent); letter-spacing: 1px; }
+        .footer-col a { display: block; color: var(--text-dim); text-decoration: none; margin-bottom: 12px; font-size: 0.85rem; }
+
         @media (max-width: 900px) {
-            .nav-menu { display: none; } /* Add a mobile menu drawer if needed */
-            .hero h1 { font-size: 3rem; }
+            .nav-menu { display: none; }
+            .hamburger { display: flex; }
+            .hero h1 { font-size: 2.5rem; }
+            .interface-card { padding: 30px; }
         }
     </style>
 </head>
@@ -134,86 +142,109 @@
             <span>COMRADES-MD</span>
         </div>
         <ul class="nav-menu">
-            <li><a href="#" class="nav-link" onclick="showSection('hero')"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="#" class="nav-link" onclick="showSection('pair')"><i class="fas fa-key"></i> Pair Code</a></li>
-            <li><a href="#" class="nav-link" onclick="showSection('qr')"><i class="fas fa-qrcode"></i> QR Code</a></li>
-            <li><a href="https://github.com/Vinny256/COMRADES-MD-BOT" class="nav-link"><i class="fas fa-code-branch"></i> Source</a></li>
-            <li><a href="https://wa.me/254768666068" class="nav-link"><i class="fas fa-headset"></i> Support</a></li>
-            <li><a href="#" class="btn-cta" onclick="showSection('pair')"><i class="fas fa-link"></i> Get Session</a></li>
+            <li><a class="nav-link" onclick="showSection('hero')"><i class="fas fa-home"></i> Home</a></li>
+            <li><a class="nav-link" onclick="showSection('pair')"><i class="fas fa-key"></i> Pair Code</a></li>
+            <li><a class="nav-link" onclick="showSection('qr')"><i class="fas fa-qrcode"></i> QR Code</a></li>
+            <li><a class="nav-link" onclick="showSection('deploy')"><i class="fas fa-rocket"></i> Deploy</a></li>
+            <li><a class="nav-link" onclick="showSection('faq')"><i class="fas fa-question-circle"></i> FAQs</a></li>
+            <li><a href="https://github.com/Vinny256/COMRADES-MD-BOT" class="nav-link"><i class="fas fa-code"></i> Source</a></li>
+            <li><a href="https://wa.me/254768666068" class="nav-link"><i class="fas fa-user-shield"></i> Owner</a></li>
         </ul>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
     </nav>
 
-    <div id="hero-sec" class="hero active-sec">
-        <div class="status-badge"><div class="dot"></div> Session Server Active</div>
-        <h1>Advanced WhatsApp<br>Bot Solution</h1>
-        <p>The next-generation neural framework for automated commerce, school management, and personal assistance. Deploy within minutes.</p>
-        <button class="main-btn" style="max-width: 250px;" onclick="showSection('pair')">GET STARTED <i class="fas fa-arrow-right"></i></button>
+    <div class="mobile-drawer" id="drawer">
+        <a class="nav-link" onclick="showSection('hero'); toggleMenu()"><i class="fas fa-home"></i> Home</a>
+        <a class="nav-link" onclick="showSection('pair'); toggleMenu()"><i class="fas fa-key"></i> Pair Code</a>
+        <a class="nav-link" onclick="showSection('qr'); toggleMenu()"><i class="fas fa-qrcode"></i> QR Code</a>
+        <a class="nav-link" onclick="showSection('deploy'); toggleMenu()"><i class="fas fa-rocket"></i> Deploy</a>
+        <a class="nav-link" onclick="showSection('faq'); toggleMenu()"><i class="fas fa-question-circle"></i> FAQs</a>
+        <a href="https://wa.me/254768666068" class="nav-link"><i class="fas fa-headset"></i> Support</a>
     </div>
 
-    <section id="interface-sec" class="hero" style="display:none; padding-top: 120px;">
+    <div id="hero-sec" class="hero">
+        <h1>Advanced WhatsApp<br>Bot Solution</h1>
+        <p>The next-generation neural framework for automated commerce, school management, and personal assistance. Experience the power of the Ghost Loader architecture.</p>
+        <button class="main-btn" style="max-width: 300px;" onclick="showSection('pair')">GET STARTED <i class="fas fa-bolt"></i></button>
+    </div>
+
+    <section id="interface-container" class="hero" style="display:none; padding-top: 120px;">
         
         <div id="pair-card" class="interface-card">
-            <h2 style="margin-bottom: 10px;">Link via Code</h2>
-            <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 30px;">Select your preferred server and enter your number.</p>
-            
+            <h2>Pairing Code</h2>
+            <p style="color:var(--text-dim); font-size:0.8rem; margin-bottom:30px;">Select server gateway and enter number.</p>
             <div class="server-grid">
-                <div class="server-btn active" id="p-srv1" onclick="setServer('p', 1)">
-                    <h4>SERVER 1</h4><span>Fast (Heroku)</span>
-                </div>
-                <div class="server-btn" id="p-srv2" onclick="setServer('p', 2)">
-                    <h4>SERVER 2</h4><span>Stable (Render)</span>
-                </div>
+                <div class="server-btn active" id="ps1" onclick="setServer('p',1)"><h4>SERVER 1</h4><span>Heroku</span></div>
+                <div class="server-btn" id="ps2" onclick="setServer('p',2)"><h4>SERVER 2</h4><span>Render</span></div>
             </div>
-
-            <input type="tel" id="phone_field">
+            <input type="tel" id="phone_field" placeholder="Phone Number">
             <button class="main-btn" onclick="requestPair()">GENERATE CODE</button>
-            <p style="margin-top: 20px; font-size: 0.75rem; cursor: pointer; color: var(--accent);" onclick="showSection('qr')">Scan QR instead?</p>
-            
-            <div id="pair-loader" class="loader-overlay"><div class="spinner"></div></div>
-            
-            <div id="result-box" style="display:none; margin-top: 30px; background: #000; padding: 25px; border-radius: 20px; border: 2px dashed var(--accent);">
-                <div id="pair-val" style="font-size: 2.5rem; font-weight: 800; color: var(--accent); letter-spacing: 5px;"></div>
-                <button class="main-btn" style="margin-top: 15px; background: transparent; color: #fff; border: 1px solid var(--border);" onclick="copy('pair-val')">COPY CODE</button>
+            <p style="margin-top:20px; font-size:0.7rem; color:var(--accent); cursor:pointer;" onclick="showSection('qr')">Get QR Code instead?</p>
+            <div id="p-loader" class="spinner"></div>
+            <div id="p-result" style="display:none; margin-top:20px; background:#000; padding:20px; border:2px dashed var(--accent); border-radius:15px; text-align:center;">
+                <div id="p-val" style="font-size:2.5rem; font-weight:800; color:var(--accent); letter-spacing:5px;"></div>
+                <button class="main-btn" style="background:transparent; color:#fff; border:1px solid var(--border); margin-top:10px;" onclick="copy('p-val')">COPY CODE</button>
             </div>
         </div>
 
         <div id="qr-card" class="interface-card">
-            <h2 style="margin-bottom: 10px;">Link via QR</h2>
-            <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 30px;">Scan the code using WhatsApp Linked Devices.</p>
-
+            <h2>QR Scanner</h2>
+            <p style="color:var(--text-dim); font-size:0.8rem; margin-bottom:30px;">Scan using WhatsApp Linked Devices.</p>
             <div class="server-grid">
-                <div class="server-btn active" id="q-srv1" onclick="setServer('q', 1)">
-                    <h4>SERVER 1</h4><span>Heroku</span>
+                <div class="server-btn active" id="qs1" onclick="setServer('q',1)"><h4>SERVER 1</h4><span>Heroku</span></div>
+                <div class="server-btn" id="qs2" onclick="setServer('q',2)"><h4>SERVER 2</h4><span>Render</span></div>
+            </div>
+            <button class="main-btn" onclick="requestQR()">GENERATE QR</button>
+            <p style="margin-top:20px; font-size:0.7rem; color:var(--accent); cursor:pointer;" onclick="showSection('pair')">Get Pairing Code instead?</p>
+            <div id="q-loader" class="spinner"></div>
+            <div id="q-holder" style="margin-top:20px;"></div>
+        </div>
+
+        <div id="deploy-card" class="interface-card">
+            <h2 style="margin-bottom:30px;">Deployment Hub</h2>
+            <div class="deploy-grid">
+                <div class="deploy-card" onclick="window.open('https://heroku.com/deploy?template=https://github.com/Vinny256/COMRADES-MD-BOT')">
+                    <i class="fas fa-server"></i><h4>HEROKU</h4>
                 </div>
-                <div class="server-btn" id="q-srv2" onclick="setServer('q', 2)">
-                    <h4>SERVER 2</h4><span>Render</span>
+                <div class="deploy-card" onclick="window.open('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD-BOT')">
+                    <i class="fas fa-cloud"></i><h4>RENDER</h4>
+                </div>
+                <div class="deploy-card" onclick="window.open('https://railway.app/new')">
+                    <i class="fas fa-train"></i><h4>RAILWAY</h4>
+                </div>
+                <div class="deploy-card" onclick="notify('Local Hosting selected. Check Source Code.')">
+                    <i class="fas fa-microchip"></i><h4>VPS/LOCAL</h4>
                 </div>
             </div>
-
-            <button class="main-btn" onclick="requestQR()">GENERATE QR IMAGE</button>
-            <p style="margin-top: 20px; font-size: 0.75rem; cursor: pointer; color: var(--accent);" onclick="showSection('pair')">Use pairing code instead?</p>
-            
-            <div id="qr-loader" class="loader-overlay"><div class="spinner"></div></div>
-            <div id="qr-holder" style="margin-top: 30px; display: flex; justify-content: center;"></div>
         </div>
+
+        <div id="faq-card" class="interface-card">
+            <h2 style="margin-bottom:30px;">Frequently Asked Questions</h2>
+            <div class="faq-container" id="faq-list">
+                </div>
+        </div>
+
     </section>
 
     <footer>
         <div class="footer-col">
             <div class="brand"><span>COMRADES-MD</span></div>
-            <p style="font-size: 0.75rem; margin-top: 15px; color: var(--text-dim);">The most advanced bot shell with ghost loading architecture.</p>
+            <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 15px;">Advanced Neural Bot Interface. Infinite Impact by Vinnie Digital Hub.</p>
         </div>
         <div class="footer-col">
-            <h4>NAVIGATION</h4>
-            <a href="#" onclick="showSection('hero')">Landing Page</a>
-            <a href="#" onclick="showSection('pair')">Pairing System</a>
-            <a href="#" onclick="showSection('qr')">QR Authentication</a>
+            <h4>PAGES</h4>
+            <a onclick="showSection('hero')">Landing Page</a>
+            <a onclick="showSection('pair')">Pairing Code</a>
+            <a onclick="showSection('qr')">QR Scanner</a>
+            <a onclick="showSection('deploy')">Deploy Bot</a>
         </div>
         <div class="footer-col">
-            <h4>RESOURCES</h4>
+            <h4>LEGAL & HELP</h4>
+            <a onclick="showSection('faq')">FAQs</a>
             <a href="https://github.com/Vinny256/COMRADES-MD-BOT">Source Code</a>
-            <a href="https://wa.me/254768666068">Owner Contact</a>
-            <a href="https://wa.me/254768666068">Support Group</a>
+            <a href="https://wa.me/254768666068">Support</a>
         </div>
     </footer>
 
@@ -228,49 +259,75 @@
             geoIpLookup: callback => fetch("https://ipapi.co/json").then(res => res.json()).then(data => callback(data.country_code))
         });
 
-        function showSection(type) {
-            const hero = document.getElementById('hero-sec');
-            const interface = document.getElementById('interface-sec');
-            const pair = document.getElementById('pair-card');
-            const qr = document.getElementById('qr-card');
+        const faqs = [
+            ["How do I connect?", "Go to Pair Code, enter your number, and link it in WhatsApp Devices."],
+            ["Can I get banned?", "COMRADES-MD uses anti-ban logic, but avoid spamming to stay safe."],
+            ["Is it free?", "Yes, the source code and standard deployment are 100% free."],
+            ["What is Ghost Loader?", "A stealth boot system that keeps the core code encrypted and secure."],
+            ["How do I update?", "Go to your Heroku dashboard and redeploy the latest main branch."],
+            ["Does it work on groups?", "Yes, it supports both private and group command management."],
+            ["Can I change the prefix?", "Yes, set the PREFIX variable in your hosting environment."],
+            ["Supported platforms?", "Heroku, Render, Railway, VPS, and Local Windows/Linux."],
+            ["Session ID expired?", "Generate a new one using the Pair Code section here."],
+            ["Bot not responding?", "Ensure your Heroku dynos are active and your Session ID is valid."],
+            ["Owner number format?", "Always use international format without the + (e.g., 2547...)."],
+            ["Multiple sessions?", "You can run multiple instances with different session IDs."],
+            ["Data security?", "We do not store your data. Everything stays on your server."],
+            ["Media support?", "Yes, supports stickers, audio, video, and documents."],
+            ["AI features?", "Integrated with GPT-based neural logic for smart responses."],
+            ["Can I host on Termux?", "Yes, follow the local installation guide on GitHub."],
+            ["Auto-read status?", "Available in the config settings within the core code."],
+            ["How to contact support?", "Click the Support link in the footer to join our WhatsApp group."],
+            ["What is Vinnie Digital Hub?", "The parent tech agency behind COMRADES-MD elite software."],
+            ["System requirements?", "Node.js v16+ and at least 512MB RAM for smooth workers."]
+        ];
 
-            hero.style.display = type === 'hero' ? 'flex' : 'none';
-            interface.style.display = type === 'hero' ? 'none' : 'flex';
-            pair.classList.toggle('active', type === 'pair');
-            qr.classList.toggle('active', type === 'qr');
+        function initFaqs() {
+            const container = document.getElementById('faq-list');
+            faqs.forEach((f, i) => {
+                container.innerHTML += `
+                <div class="faq-item" onclick="this.classList.toggle('open')">
+                    <div class="faq-question">${f[0]} <i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-answer">${f[1]}</div>
+                </div>`;
+            });
+        }
+
+        function toggleMenu() { document.getElementById('drawer').classList.toggle('open'); }
+
+        function showSection(id) {
+            document.getElementById('hero-sec').style.display = id === 'hero' ? 'flex' : 'none';
+            document.getElementById('interface-container').style.display = id === 'hero' ? 'none' : 'flex';
+            document.querySelectorAll('.interface-card').forEach(c => c.classList.remove('active'));
+            document.getElementById(id + '-card').classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        function setServer(prefix, id) {
-            document.querySelectorAll(`.${prefix}-server-btn`).forEach(b => b.classList.remove('active'));
-            document.getElementById(`${prefix}-srv${id}`).classList.add('active');
+        function setServer(p, id) {
+            document.querySelectorAll(`.${p}s`).forEach(b => b.classList.remove('active'));
+            document.getElementById(p + 's' + id).classList.add('active');
             currentSrv = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://your-render-url.com";
-            notify(`Server ${id} Selected`);
+            notify("Server Gateway " + id + " Active");
         }
 
         async function requestPair() {
             const num = iti.getNumber().replace(/\D/g, '');
-            if(num.length < 8) return notify("Invalid Number", true);
-            
-            document.getElementById('pair-loader').style.display = 'block';
+            if(num.length < 8) return notify("ERR: Invalid Number", true);
+            document.getElementById('p-loader').style.display = 'block';
             try {
                 const res = await fetch(`${currentSrv}/start-pairing?number=${num}`);
                 const data = await res.json();
-                document.getElementById('pair-val').innerText = data.code;
-                document.getElementById('result-box').style.display = 'block';
-                notify("Code Generated Successfully");
-            } catch(e) { notify("Server Connection Failed", true); }
-            document.getElementById('pair-loader').style.display = 'none';
+                document.getElementById('p-val').innerText = data.code;
+                document.getElementById('p-result').style.display = 'block';
+                notify("Pairing Code Synchronized");
+            } catch(e) { notify("Backend Offline", true); }
+            document.getElementById('p-loader').style.display = 'none';
         }
 
-        function notify(m, err=false) {
-            Toastify({ text: m, style: { background: err ? "#ef4444" : "#ff9100", color: "#fff", borderRadius: "12px", fontWeight: "600" } }).showToast();
-        }
-
-        function copy(id) {
-            navigator.clipboard.writeText(document.getElementById(id).innerText);
-            notify("Copied to Clipboard");
-        }
+        function notify(m, e=false) { Toastify({ text: m, style: { background: e ? "#ff4444" : "#ff9100", color: "#fff", borderRadius: "12px" } }).showToast(); }
+        function copy(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); notify("Copied to Vault"); }
+        
+        initFaqs();
     </script>
 </body>
 </html>
