@@ -52,7 +52,15 @@
         .mobile-drawer.open { right: 0; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 3000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--bg); border: 2px solid var(--accent); padding: 40px; border-radius: 30px; width: 90%; max-width: 450px; position: relative; text-align: center; }
+        
+        /* 🚀 UPGRADED: Modal Scrolling for Small Screens */
+        .modal-content { background: var(--bg); border: 2px solid var(--accent); padding: 40px; border-radius: 30px; width: 90%; max-width: 450px; position: relative; text-align: center; max-height: 85vh; overflow-y: auto; }
+        
+        /* 🚀 UPGRADED: Custom Scrollbar for Modal */
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
         .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-dim); cursor: pointer; font-size: 1.5rem; }
 
         .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 10%; background: radial-gradient(circle at center, rgba(17,17,17,0.5) 0%, rgba(5,5,5,1) 100%); position: relative; z-index: 1;}
@@ -242,11 +250,11 @@
             <input type="tel" id="phone_field">
             
             <div style="display: flex; gap: 10px; margin-bottom: 15px; margin-top: 10px;">
-                <label style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
-                    <input type="radio" name="p_sess_type" value="short" checked style="accent-color: var(--accent); margin-right: 5px;"> Short ID
+                <label for="p_short" style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
+                    <input type="radio" id="p_short" name="p_sess_type" value="short" checked style="accent-color: var(--accent); margin-right: 5px;"> Short ID
                 </label>
-                <label style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
-                    <input type="radio" name="p_sess_type" value="long" style="accent-color: var(--accent); margin-right: 5px;"> Long ID
+                <label for="p_long" style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
+                    <input type="radio" id="p_long" name="p_sess_type" value="long" style="accent-color: var(--accent); margin-right: 5px;"> Long ID
                 </label>
             </div>
 
@@ -276,11 +284,11 @@
             <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px;">Go to WhatsApp > Linked Devices > Link a Device. Scan the QR code generated below.</p>
             
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <label style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
-                    <input type="radio" name="q_sess_type" value="short" checked style="accent-color: var(--accent); margin-right: 5px;"> Short ID
+                <label for="q_short" style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
+                    <input type="radio" id="q_short" name="q_sess_type" value="short" checked style="accent-color: var(--accent); margin-right: 5px;"> Short ID
                 </label>
-                <label style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
-                    <input type="radio" name="q_sess_type" value="long" style="accent-color: var(--accent); margin-right: 5px;"> Long ID
+                <label for="q_long" style="flex: 1; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; font-size: 0.75rem; color: #fff;">
+                    <input type="radio" id="q_long" name="q_sess_type" value="long" style="accent-color: var(--accent); margin-right: 5px;"> Long ID
                 </label>
             </div>
 
@@ -356,16 +364,14 @@
         function toggleMenu() { document.getElementById('drawer').classList.toggle('open'); }
         function toggleTheme() { document.body.classList.toggle('light-mode'); notify("Theme Toggled"); }
         
-        // 🚀 UPGRADED: Socket Kill-Switch and UI Reset
         function closeModals() { 
             document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); 
             
             if (socket) {
-                socket.disconnect(); // Immediately drops the backend ghost loop
+                socket.disconnect();
                 socket = null;
             }
             
-            // Reset all UI states
             document.getElementById('p-loader').style.display = 'none';
             document.getElementById('q-loader').style.display = 'none';
             document.getElementById('p-result').style.display = 'none';
@@ -373,7 +379,6 @@
             document.getElementById('p-session-result').style.display = 'none';
             document.getElementById('q-session-result').style.display = 'none';
             
-            // Unlock buttons
             const pBtn = document.getElementById('p-submit-btn');
             const qBtn = document.getElementById('q-submit-btn');
             pBtn.disabled = false; pBtn.innerText = 'SUBMIT';
@@ -426,7 +431,6 @@
                 notify("Code Received!");
             });
             
-            // 🚀 INJECTED: Dynamic Session Display Listener
             socket.on("session-ready", sessionId => {
                 notify("✅ Session Connected Successfully!");
                 if (currentSrvType === "pairing") {
@@ -446,7 +450,6 @@
             if(num.length < 8) return notify("ERR: Invalid Number", true);
             const sessType = document.querySelector('input[name="p_sess_type"]:checked').value;
             
-            // 🚀 UPGRADED: Button Lock
             const btn = document.getElementById('p-submit-btn');
             btn.disabled = true;
             btn.innerText = 'REQUESTING...';
@@ -470,7 +473,6 @@
         async function requestQR() {
             const sessType = document.querySelector('input[name="q_sess_type"]:checked').value;
             
-            // 🚀 UPGRADED: Button Lock
             const btn = document.getElementById('q-submit-btn');
             btn.disabled = true;
             btn.innerText = 'GENERATING...';
@@ -533,7 +535,6 @@
 
         /* ✨ ENGINE MODULES: RIPPLES, CURSOR, AND STARS ✨ */
         
-        // 1. The Interactive Cursor Glow
         const cursorGlow = document.getElementById('cursor-glow');
         if (window.matchMedia("(pointer: fine)").matches) {
             cursorGlow.style.display = "block";
@@ -543,7 +544,6 @@
             });
         }
 
-        // 2. The Button Ripple Effect
         document.querySelectorAll('.main-btn, .server-box').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 let ripple = document.createElement('span');
@@ -558,7 +558,6 @@
             });
         });
 
-        // 3. The Flowing Starfield Particle Background
         const canvas = document.getElementById('particles-bg');
         const ctx = canvas.getContext('2d');
         let w = canvas.width = window.innerWidth;
