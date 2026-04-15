@@ -85,6 +85,47 @@
         .footer-col a:hover { color: var(--accent); }
 
         @media (max-width: 900px) { .nav-menu { display: none; } .hamburger { display: flex; } .hero h1 { font-size: 2.5rem; } }
+
+        /* ━━━━━ 🚀 NEW ANIMATION ENGINE ADDED BELOW ━━━━━ */
+        @keyframes pulse-call {
+            0% { box-shadow: 0 0 0 0 var(--accent); transform: scale(1); }
+            50% { box-shadow: 0 0 25px 8px var(--accent-soft); transform: scale(1.03); }
+            100% { box-shadow: 0 0 0 0 var(--accent); transform: scale(1); }
+        }
+        .call-action { animation: pulse-call 2s infinite cubic-bezier(0.66, 0, 0, 1) !important; }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-pop { animation: popIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        .brand img { animation: float 3s ease-in-out infinite; }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .hero { background-size: 200% 200% !important; animation: gradientShift 12s ease infinite !important; }
+
+        .server-box:hover { transform: translateY(-5px) scale(1.02) !important; box-shadow: 0 10px 25px var(--accent-soft) !important; border-color: var(--accent) !important; }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-content { animation: modalFadeIn 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
     </style>
 </head>
 <body>
@@ -119,11 +160,11 @@
     </div>
 
     <div id="hero-sec" class="hero">
-        <h1>Ultimate Neural<br>Bot Interface</h1>
-        <p>Advanced WhatsApp automation with Ghost Loader security. Infinite Impact by Vinnie Digital Hub.</p>
-        <button class="main-btn" style="max-width: 300px;" onclick="showSection('pair')">GET STARTED</button>
+        <h1 class="animate-pop delay-1">Ultimate Neural<br>Bot Interface</h1>
+        <p class="animate-pop delay-2">Advanced WhatsApp automation with Ghost Loader security. Infinite Impact by Vinnie Digital Hub.</p>
+        <button class="main-btn call-action animate-pop delay-3" style="max-width: 300px;" onclick="showSection('pair')">GET STARTED</button>
         
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin-top: 60px; border-top: 1px solid var(--border); padding-top: 40px; width: 100%; max-width: 800px;">
+        <div class="animate-pop delay-4" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin-top: 60px; border-top: 1px solid var(--border); padding-top: 40px; width: 100%; max-width: 800px;">
             <div><h3 style="color: var(--accent); font-size: 2rem; font-family: 'Poppins';">137+</h3><p style="font-size: 0.8rem; color: var(--text-dim);">Core Commands</p></div>
             <div><h3 style="color: var(--accent); font-size: 2rem; font-family: 'Poppins';">E2EE</h3><p style="font-size: 0.8rem; color: var(--text-dim);">Military Encryption</p></div>
             <div><h3 style="color: var(--accent); font-size: 2rem; font-family: 'Poppins';">24/7</h3><p style="font-size: 0.8rem; color: var(--text-dim);">Ghost Uptime</p></div>
@@ -262,7 +303,11 @@
             const container = document.getElementById('faq-list');
             if(!container) return;
             faqs.forEach(f => {
-                container.innerHTML += `<div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-question">${f[0]} <i class="fas fa-chevron-down"></i></div><div class="faq-answer">${f[1]}</div></div>`;
+                container.innerHTML += `
+                <div class="faq-item" onclick="this.classList.toggle('open')">
+                    <div class="faq-question">${f[0]} <i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-answer">${f[1]}</div>
+                </div>`;
             });
         }
 
@@ -277,6 +322,14 @@
             const target = document.getElementById(id + '-card');
             if(target) target.classList.add('active');
             window.scrollTo(0,0);
+            
+            // Re-trigger hero animations smoothly
+            if(id === 'hero') {
+                const heroEl = document.getElementById('hero-sec');
+                heroEl.style.animation = 'none';
+                void heroEl.offsetWidth; 
+                heroEl.style.animation = 'fadeInUp 0.8s ease-out forwards';
+            }
         }
 
         function openPairModal(id) {
