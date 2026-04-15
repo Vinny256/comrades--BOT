@@ -67,6 +67,8 @@
         input[type="tel"] { width: 100% !important; background: rgba(0,0,0,0.6) !important; border: 1px solid var(--border) !important; color: #fff !important; padding: 20px 20px 20px 95px !important; border-radius: 15px !important; }
 
         .main-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: #000; font-weight: 800; cursor: pointer; position: relative; overflow: hidden; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; } /* Added for Request Lock UI */
+        
         .server-box { background: var(--glass); border: 1px solid var(--border); padding: 30px; border-radius: 20px; cursor: pointer; margin-bottom: 20px; position: relative; overflow: hidden; }
         .server-box:hover { border-color: var(--accent); transform: translateY(-3px); }
 
@@ -248,12 +250,20 @@
                 </label>
             </div>
 
-            <button class="main-btn" onclick="requestPair()">SUBMIT</button>
+            <button id="p-submit-btn" class="main-btn" onclick="requestPair()">SUBMIT</button>
             <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
             <div id="p-loader" class="spinner"></div>
+            
             <div id="p-result" style="display:none; margin-top:20px;">
                 <h2 id="p-val" style="color:var(--accent); letter-spacing:5px;"></h2>
                 <button class="main-btn" onclick="copy('p-val')">COPY</button>
+            </div>
+
+            <div id="p-session-result" style="display:none; margin-top:20px; background: rgba(0,255,0,0.1); padding: 15px; border-radius: 15px; border: 1px solid #00ff00;">
+                <p style="font-size:0.8rem; color:#fff; font-weight: bold; margin-bottom:10px;">✅ SUCCESS! Session Generated.</p>
+                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:15px;">This was sent to your Whatsapp you can click the button to copy.</p>
+                <h3 id="p-session-val" style="color:#00ff00; word-break: break-all; font-size: 0.8rem; margin-bottom: 15px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px;"></h3>
+                <button class="main-btn" style="background:#00ff00; color:#000;" onclick="copy('p-session-val')">COPY SESSION ID</button>
             </div>
         </div>
     </div>
@@ -274,10 +284,17 @@
                 </label>
             </div>
 
-            <button class="main-btn" onclick="requestQR()">GENERATE QR</button>
+            <button id="q-submit-btn" class="main-btn" onclick="requestQR()">GENERATE QR</button>
             <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
             <div id="q-loader" class="spinner"></div>
             <div id="q-holder" style="margin-top:20px;"></div>
+
+            <div id="q-session-result" style="display:none; margin-top:20px; background: rgba(0,255,0,0.1); padding: 15px; border-radius: 15px; border: 1px solid #00ff00;">
+                <p style="font-size:0.8rem; color:#fff; font-weight: bold; margin-bottom:10px;">✅ SUCCESS! Session Generated.</p>
+                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:15px;">This was sent to your Whatsapp you can click the button to copy.</p>
+                <h3 id="q-session-val" style="color:#00ff00; word-break: break-all; font-size: 0.8rem; margin-bottom: 15px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px;"></h3>
+                <button class="main-btn" style="background:#00ff00; color:#000;" onclick="copy('q-session-val')">COPY SESSION ID</button>
+            </div>
         </div>
     </div>
 
@@ -338,7 +355,30 @@
 
         function toggleMenu() { document.getElementById('drawer').classList.toggle('open'); }
         function toggleTheme() { document.body.classList.toggle('light-mode'); notify("Theme Toggled"); }
-        function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+        
+        // 🚀 UPGRADED: Socket Kill-Switch and UI Reset
+        function closeModals() { 
+            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); 
+            
+            if (socket) {
+                socket.disconnect(); // Immediately drops the backend ghost loop
+                socket = null;
+            }
+            
+            // Reset all UI states
+            document.getElementById('p-loader').style.display = 'none';
+            document.getElementById('q-loader').style.display = 'none';
+            document.getElementById('p-result').style.display = 'none';
+            document.getElementById('q-holder').innerHTML = '';
+            document.getElementById('p-session-result').style.display = 'none';
+            document.getElementById('q-session-result').style.display = 'none';
+            
+            // Unlock buttons
+            const pBtn = document.getElementById('p-submit-btn');
+            const qBtn = document.getElementById('q-submit-btn');
+            pBtn.disabled = false; pBtn.innerText = 'SUBMIT';
+            qBtn.disabled = false; qBtn.innerText = 'GENERATE QR';
+        }
         
         function showSection(id) {
             document.getElementById('hero-sec').style.display = id === 'hero' ? 'flex' : 'none';
@@ -385,13 +425,33 @@
                 document.getElementById('p-result').style.display = 'block';
                 notify("Code Received!");
             });
+            
+            // 🚀 INJECTED: Dynamic Session Display Listener
+            socket.on("session-ready", sessionId => {
+                notify("✅ Session Connected Successfully!");
+                if (currentSrvType === "pairing") {
+                    document.getElementById('p-result').style.display = 'none';
+                    document.getElementById('p-session-result').style.display = 'block';
+                    document.getElementById('p-session-val').innerText = sessionId;
+                } else if (currentSrvType === "qr") {
+                    document.getElementById('q-holder').innerHTML = '';
+                    document.getElementById('q-session-result').style.display = 'block';
+                    document.getElementById('q-session-val').innerText = sessionId;
+                }
+            });
         }
 
         async function requestPair() {
             const num = iti.getNumber().replace(/\D/g, '');
             if(num.length < 8) return notify("ERR: Invalid Number", true);
             const sessType = document.querySelector('input[name="p_sess_type"]:checked').value;
+            
+            // 🚀 UPGRADED: Button Lock
+            const btn = document.getElementById('p-submit-btn');
+            btn.disabled = true;
+            btn.innerText = 'REQUESTING...';
             document.getElementById('p-loader').style.display = 'block';
+            
             try {
                 await fetch(`${currentBaseUrl}/start-pairing`, {
                     method: 'POST',
@@ -402,12 +462,20 @@
             } catch(e) { 
                 notify("Server Offline", true); 
                 document.getElementById('p-loader').style.display = 'none'; 
+                btn.disabled = false;
+                btn.innerText = 'SUBMIT';
             }
         }
 
         async function requestQR() {
             const sessType = document.querySelector('input[name="q_sess_type"]:checked').value;
+            
+            // 🚀 UPGRADED: Button Lock
+            const btn = document.getElementById('q-submit-btn');
+            btn.disabled = true;
+            btn.innerText = 'GENERATING...';
             document.getElementById('q-loader').style.display = 'block';
+            
             notify("Generating QR...");
             try {
                 await fetch(`${currentBaseUrl}/start-qr`, {
@@ -418,6 +486,8 @@
             } catch(e) { 
                 notify("Server Offline", true); 
                 document.getElementById('q-loader').style.display = 'none'; 
+                btn.disabled = false;
+                btn.innerText = 'GENERATE QR';
             }
         }
 
