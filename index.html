@@ -63,7 +63,7 @@
         .interface-card.active { display: block; animation: fadeInUp 0.6s ease-out; }
 
         .iti { width: 100%; margin-bottom: 20px; }
-        .iti__country-list { background: #000 !important; color: white; }
+        .iti__country-list { background: #000 !important; color: white !important; }
         input[type="tel"] { width: 100% !important; background: rgba(0,0,0,0.6) !important; border: 1px solid var(--border) !important; color: #fff !important; padding: 20px 20px 20px 95px !important; border-radius: 15px !important; }
 
         .main-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: #000; font-weight: 800; cursor: pointer; }
@@ -109,6 +109,8 @@
         <a class="nav-link" onclick="showSection('hero'); toggleMenu()">Home</a>
         <a class="nav-link" onclick="showSection('pair'); toggleMenu()">Pair Code</a>
         <a class="nav-link" onclick="showSection('qr'); toggleMenu()">QR Code</a>
+        <a class="nav-link" onclick="showSection('deploy'); toggleMenu()">Deploy</a>
+        <a class="nav-link" onclick="showSection('faq'); toggleMenu()">FAQs</a>
         <a class="nav-link" href="https://github.com/Vinny256/COMRADES-MD-BOT">Source Code</a>
         <a class="nav-link" href="https://wa.me/254768666068">Support</a>
         <a class="nav-link" onclick="toggleTheme(); toggleMenu()">Change Theme</a>
@@ -160,7 +162,7 @@
             <i class="fas fa-times close-modal" onclick="closeModals()"></i>
             <h3>Pairing Code</h3>
             <p id="srv-tag" style="margin-bottom:10px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
-            <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px;">Instructions: Open WhatsApp > Linked Devices > Link with phone number instead. Enter the code below.</p>
+            <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px;">Go to WhatsApp > Linked Devices > Link with phone number. Enter the code generated below.</p>
             <input type="tel" id="phone_field">
             <button class="main-btn" onclick="requestPair()">SUBMIT</button>
             <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
@@ -177,7 +179,7 @@
             <i class="fas fa-times close-modal" onclick="closeModals()"></i>
             <h3>QR Link</h3>
             <p id="q-srv-tag" style="margin-bottom:10px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
-            <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px;">Instructions: Open WhatsApp > Linked Devices > Link a Device. Scan the QR code generated below.</p>
+            <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px;">Go to WhatsApp > Linked Devices > Link a Device. Scan the QR code generated below.</p>
             <button class="main-btn" onclick="requestQR()">GENERATE QR</button>
             <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
             <div id="q-loader" class="spinner"></div>
@@ -206,10 +208,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
     <script>
-        let currentSrv = "";
+        let currentBaseUrl = "";
+        let currentSrvType = "";
         let pendingUrl = "";
+        let socket;
+
         const iti = window.intlTelInput(document.querySelector("#phone_field"), {
             separateDialCode: true,
             initialCountry: "ke",
@@ -221,20 +227,14 @@
             ["Can I get banned?", "Avoid spamming and use a secondary number to minimize risk."],
             ["Is it free?", "Yes, the bot is free. Hosting costs depend on your provider."],
             ["What is Ghost Loader?", "A secure remote execution system for core bot commands."],
-            ["How to update?", "Redeploy your hosting instance using the latest GitHub source."],
-            ["Supports groups?", "Yes, includes full admin and group management tools."],
-            ["Supported platforms?", "Heroku, Render, Railway, VPS, and Local machines."]
+            ["How to update?", "Redeploy your hosting instance using the latest GitHub source."]
         ];
 
         function initFaqs() {
             const container = document.getElementById('faq-list');
             if(!container) return;
             faqs.forEach(f => {
-                container.innerHTML += `
-                <div class="faq-item" onclick="this.classList.toggle('open')">
-                    <div class="faq-question">${f[0]} <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-answer">${f[1]}</div>
-                </div>`;
+                container.innerHTML += `<div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-question">${f[0]} <i class="fas fa-chevron-down"></i></div><div class="faq-answer">${f[1]}</div></div>`;
             });
         }
 
@@ -252,19 +252,70 @@
         }
 
         function openPairModal(id) {
-            currentSrv = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://comrades-backend.onrender.com";
+            currentBaseUrl = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://comrades-backend.onrender.com";
+            currentSrvType = "pairing";
             document.getElementById('srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('pair-modal').style.display = 'flex';
+            initSocket(currentBaseUrl);
         }
 
         function openQRModal(id) {
-            currentSrv = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://comrades-backend.onrender.com";
+            currentBaseUrl = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://comrades-backend.onrender.com";
+            currentSrvType = "qr";
             document.getElementById('q-srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('qr-modal').style.display = 'flex';
+            initSocket(currentBaseUrl);
+        }
+
+        function initSocket(url) {
+            if (socket) socket.disconnect();
+            socket = io(url);
+            socket.on("qr", data => {
+                document.getElementById('q-loader').style.display = 'none';
+                document.getElementById('q-holder').innerHTML = `<img src="${data}" style="width:250px; border: 5px solid white; border-radius: 15px;">`;
+            });
+            socket.on("pairing-code", code => {
+                document.getElementById('p-loader').style.display = 'none';
+                document.getElementById('p-val').innerText = code;
+                document.getElementById('p-result').style.display = 'block';
+                notify("Code Received!");
+            });
+        }
+
+        async function requestPair() {
+            const num = iti.getNumber().replace(/\D/g, '');
+            if(num.length < 8) return notify("ERR: Invalid Number", true);
+            document.getElementById('p-loader').style.display = 'block';
+            try {
+                await fetch(`${currentBaseUrl}/start-pairing`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: num })
+                });
+                notify("Request Sent! Wait for code...");
+            } catch(e) { 
+                notify("Server Offline", true); 
+                document.getElementById('p-loader').style.display = 'none'; 
+            }
+        }
+
+        async function requestQR() {
+            document.getElementById('q-loader').style.display = 'block';
+            notify("Generating QR...");
+            try {
+                await fetch(`${currentBaseUrl}/start-qr`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            } catch(e) { 
+                notify("Server Offline", true); 
+                document.getElementById('q-loader').style.display = 'none'; 
+            }
         }
 
         function verifyFork(url) {
             pendingUrl = url;
+            document.getElementById('gh-user').value = "";
             document.getElementById('fork-status-area').innerHTML = "";
             document.getElementById('fork-modal').style.display = 'flex';
         }
@@ -273,7 +324,7 @@
             const user = document.getElementById('gh-user').value.trim();
             if(!user) return notify("Enter Username", true);
             const statusArea = document.getElementById('fork-status-area');
-            statusArea.innerHTML = "Checking...";
+            statusArea.innerHTML = "Verifying...";
             try {
                 const res = await fetch(`https://api.github.com/repos/Vinny256/COMRADES-MD-BOT/forks`);
                 const forks = await res.json();
@@ -285,52 +336,14 @@
                     const timer = setInterval(() => {
                         statusArea.innerHTML = `WOW REPO FORKED! Redirecting in ${count}s...`;
                         count--;
-                        if(count < 0) {
-                            clearInterval(timer);
-                            window.open(pendingUrl);
-                            closeModals();
-                        }
+                        if(count < 0) { clearInterval(timer); window.open(pendingUrl); closeModals(); }
                     }, 1000);
                 } else {
                     statusArea.style.color = "#ff4444";
                     statusArea.innerHTML = `<i class="fas fa-sad-tear fa-3x" style="display:block; margin-bottom:10px;"></i> You have not forked repo!`;
-                    setTimeout(() => window.open('https://github.com/Vinny256/COMRADES-MD-BOT/fork'), 2000);
+                    setTimeout(() => window.open('https://github.com/Vinny256/COMRADES-MD-BOT/fork'), 2500);
                 }
-            } catch(e) { notify("API Error", true); }
-        }
-
-        async function requestPair() {
-            const num = iti.getNumber().replace(/\D/g, '');
-            if(num.length < 8) return notify("ERR: Invalid Number", true);
-            document.getElementById('p-loader').style.display = 'block';
-            try {
-                const res = await fetch(currentSrv, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phoneNumber: num })
-                });
-                const data = await res.json();
-                if(data.code) {
-                    document.getElementById('p-val').innerText = data.code;
-                    document.getElementById('p-result').style.display = 'block';
-                    notify("Connected!");
-                } else {
-                    notify("Generation Started, Check WhatsApp");
-                }
-            } catch(e) { notify("Offline", true); }
-            document.getElementById('p-loader').style.display = 'none';
-        }
-
-        async function requestQR() {
-            document.getElementById('q-loader').style.display = 'block';
-            notify("Fetching QR...");
-            try {
-                 await fetch(currentSrv, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-            } catch(e) {}
-            setTimeout(() => { document.getElementById('q-loader').style.display = 'none'; }, 2000);
+            } catch(e) { notify("Verification Error", true); }
         }
 
         function notify(m, e=false) { 
@@ -338,11 +351,7 @@
             Toastify({ text: m, style: { background: color, color: "#fff", borderRadius: "12px" } }).showToast(); 
         }
 
-        function copy(id) { 
-            navigator.clipboard.writeText(document.getElementById(id).innerText); 
-            notify("Copied!"); 
-        }
-        
+        function copy(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); notify("Copied!"); }
         window.onload = initFaqs;
     </script>
 </body>
