@@ -64,7 +64,8 @@
 
         .iti { width: 100%; margin-bottom: 20px; }
         .iti__country-list { background: #000 !important; color: white; }
-        input[type="tel"] { width: 100% !important; background: rgba(0,0,0,0.6) !important; border: 1px solid var(--border) !important; color: #fff !important; padding: 20px !important; border-radius: 15px !important; }
+        /* FIXED PHONE INPUT OVERLAP */
+        input[type="tel"] { width: 100% !important; background: rgba(0,0,0,0.6) !important; border: 1px solid var(--border) !important; color: #fff !important; padding: 20px 20px 20px 90px !important; border-radius: 15px !important; }
 
         .main-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: #000; font-weight: 800; cursor: pointer; }
         .server-box { background: var(--glass); border: 1px solid var(--border); padding: 30px; border-radius: 20px; cursor: pointer; margin-bottom: 20px; }
@@ -98,6 +99,8 @@
             <li><a class="nav-link" onclick="showSection('qr')">QR Code</a></li>
             <li><a class="nav-link" onclick="showSection('deploy')">Deploy</a></li>
             <li><a class="nav-link" onclick="showSection('faq')">FAQs</a></li>
+            <li><a class="nav-link" href="https://github.com/Vinny256/COMRADES-MD-BOT"><i class="fas fa-code"></i> Source</a></li>
+            <li><a class="nav-link" href="https://wa.me/254768666068"><i class="fas fa-headset"></i> Support</a></li>
             <li><a class="nav-link" onclick="toggleTheme()"><i class="fas fa-palette"></i> Theme</a></li>
         </ul>
         <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
@@ -107,6 +110,8 @@
         <a class="nav-link" onclick="showSection('hero'); toggleMenu()">Home</a>
         <a class="nav-link" onclick="showSection('pair'); toggleMenu()">Pair Code</a>
         <a class="nav-link" onclick="showSection('qr'); toggleMenu()">QR Code</a>
+        <a class="nav-link" href="https://github.com/Vinny256/COMRADES-MD-BOT">Source Code</a>
+        <a class="nav-link" href="https://wa.me/254768666068">Support</a>
         <a class="nav-link" onclick="toggleTheme(); toggleMenu()">Change Theme</a>
     </div>
 
@@ -136,10 +141,10 @@
         <div id="deploy-card" class="interface-card">
             <h2>Deployment Hub</h2>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:30px;">
-                <div class="server-box" onclick="window.open('https://heroku.com/deploy?template=https://github.com/Vinny256/COMRADES-MD-BOT')">Heroku</div>
-                <div class="server-box" onclick="window.open('https://render.com')">Render</div>
-                <div class="server-box" onclick="window.open('https://railway.app')">Railway</div>
-                <div class="server-box" onclick="window.open('https://koyeb.com')">Koyeb</div>
+                <div class="server-box" onclick="verifyFork('https://heroku.com/deploy?template=https://github.com/Vinny256/COMRADES-MD-BOT')">Heroku</div>
+                <div class="server-box" onclick="verifyFork('https://render.com')">Render</div>
+                <div class="server-box" onclick="verifyFork('https://railway.app')">Railway</div>
+                <div class="server-box" onclick="verifyFork('https://koyeb.com')">Koyeb</div>
             </div>
             <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:var(--text-main);" onclick="showSection('hero')">GO BACK</button>
         </div>
@@ -179,6 +184,18 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="fork-modal">
+        <div class="modal-content">
+            <i class="fas fa-times close-modal" onclick="closeModals()"></i>
+            <h3>Verification Required</h3>
+            <p style="margin-bottom:20px; font-size:0.8rem;">Enter your GitHub username to verify fork.</p>
+            <input type="text" id="gh-user" style="width:100%; padding:15px; border-radius:10px; border:1px solid var(--border); background:rgba(0,0,0,0.5); color:#fff; margin-bottom:20px;" placeholder="GitHub Username">
+            <button class="main-btn" onclick="checkForkStatus()">VERIFY FORK</button>
+            <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
+            <div id="fork-status-area" style="margin-top:20px; font-weight:bold;"></div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-col"><h4>COMRADES-MD</h4><p>Infinite Impact by Vinnie Digital Hub.</p></div>
         <div class="footer-col"><h4>PAGES</h4><a onclick="showSection('hero')">Landing</a><a onclick="showSection('pair')">Pairing</a><a onclick="showSection('qr')">QR</a></div>
@@ -187,9 +204,11 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <script>
         let currentSrv = "";
+        let pendingUrl = "";
         const iti = window.intlTelInput(document.querySelector("#phone_field"), {
             separateDialCode: true,
             initialCountry: "ke",
@@ -243,6 +262,42 @@
             document.getElementById('qr-modal').style.display = 'flex';
         }
 
+        function verifyFork(url) {
+            pendingUrl = url;
+            document.getElementById('fork-status-area').innerHTML = "";
+            document.getElementById('fork-modal').style.display = 'flex';
+        }
+
+        async function checkForkStatus() {
+            const user = document.getElementById('gh-user').value.trim();
+            if(!user) return notify("Enter Username", true);
+            const statusArea = document.getElementById('fork-status-area');
+            statusArea.innerHTML = "Checking...";
+            try {
+                const res = await fetch(`https://api.github.com/repos/Vinny256/COMRADES-MD/forks`);
+                const forks = await res.json();
+                const found = forks.some(f => f.owner.login.toLowerCase() === user.toLowerCase());
+                if(found) {
+                    confetti();
+                    statusArea.style.color = "#00ff00";
+                    let count = 10;
+                    const timer = setInterval(() => {
+                        statusArea.innerHTML = `WOW REPO FORKED! Redirecting in ${count}s...`;
+                        count--;
+                        if(count < 0) {
+                            clearInterval(timer);
+                            window.open(pendingUrl);
+                            closeModals();
+                        }
+                    }, 1000);
+                } else {
+                    statusArea.style.color = "#ff4444";
+                    statusArea.innerHTML = `<i class="fas fa-sad-tear fa-3x" style="display:block; margin-bottom:10px;"></i> You have not forked repo!`;
+                    setTimeout(() => window.open('https://github.com/Vinny256/COMRADES-MD/fork'), 2000);
+                }
+            } catch(e) { notify("API Error", true); }
+        }
+
         async function requestPair() {
             const num = iti.getNumber().replace(/\D/g, '');
             if(num.length < 8) return notify("ERR: Invalid Number", true);
@@ -264,7 +319,7 @@
         }
 
         function notify(m, e=false) { 
-            const color = e ? "#ff4444" : getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+            const color = e ? "#ff4444" : "#ff9100";
             Toastify({ text: m, style: { background: color, color: "#fff", borderRadius: "12px" } }).showToast(); 
         }
 
