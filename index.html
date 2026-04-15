@@ -221,9 +221,12 @@
             <h2>Deployment Hub</h2>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:30px;">
                 <div class="server-box" onclick="verifyFork('https://heroku.com/deploy?template=https://github.com/Vinny256/COMRADES-MD-BOT')">Heroku</div>
-                <div class="server-box" onclick="verifyFork('https://render.com')">Render</div>
-                <div class="server-box" onclick="verifyFork('https://railway.app')">Railway</div>
-                <div class="server-box" onclick="verifyFork('https://koyeb.com')">Koyeb</div>
+                <div class="server-box" onclick="verifyFork('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD-BOT')">Render</div>
+                <div class="server-box" onclick="verifyFork('https://railway.app/new')">Railway</div>
+                <div class="server-box" onclick="verifyFork('https://app.koyeb.com/deploy?type=git&repository=github.com/Vinny256/COMRADES-MD-BOT&branch=main')">Koyeb</div>
+                <div class="server-box" onclick="verifyFork('https://replit.com/github/Vinny256/COMRADES-MD-BOT')">Replit</div>
+                <div class="server-box" onclick="verifyFork('https://github.com/Vinny256/COMRADES-MD-BOT')">VPS / Termux</div>
+                <div class="server-box" style="grid-column: span 2;" onclick="verifyFork('https://github.com/Vinny256/COMRADES-MD-BOT')">Pterodactyl Panel</div>
             </div>
             <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:var(--text-main);" onclick="showSection('hero')">GO BACK</button>
         </div>
@@ -400,7 +403,6 @@
             currentSrvType = "pairing";
             document.getElementById('srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('pair-modal').style.display = 'flex';
-            // 🚀 Socket connection removed from here to prevent ghost requests!
         }
 
         function openQRModal(id) {
@@ -408,7 +410,6 @@
             currentSrvType = "qr";
             document.getElementById('q-srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('qr-modal').style.display = 'flex';
-            // 🚀 Socket connection removed from here to prevent ghost requests!
         }
 
         function initSocket(url) {
@@ -450,7 +451,6 @@
             btn.innerText = 'REQUESTING...';
             document.getElementById('p-loader').style.display = 'block';
             
-            // 🚀 INJECTED: Connect socket ONLY when user initiates the request!
             initSocket(currentBaseUrl);
             
             try {
@@ -476,7 +476,6 @@
             btn.innerText = 'GENERATING...';
             document.getElementById('q-loader').style.display = 'block';
             
-            // 🚀 INJECTED: Connect socket ONLY when user initiates the request!
             initSocket(currentBaseUrl);
             
             notify("Generating QR...");
