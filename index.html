@@ -64,8 +64,7 @@
 
         .iti { width: 100%; margin-bottom: 20px; }
         .iti__country-list { background: #000 !important; color: white; }
-        /* FIXED PHONE INPUT OVERLAP */
-        input[type="tel"] { width: 100% !important; background: rgba(0,0,0,0.6) !important; border: 1px solid var(--border) !important; color: #fff !important; padding: 20px 20px 20px 90px !important; border-radius: 15px !important; }
+        input[type="tel"] { width: 100% !important; background: rgba(0,0,0,0.6) !important; border: 1px solid var(--border) !important; color: #fff !important; padding: 20px 20px 20px 95px !important; border-radius: 15px !important; }
 
         .main-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: #000; font-weight: 800; cursor: pointer; }
         .server-box { background: var(--glass); border: 1px solid var(--border); padding: 30px; border-radius: 20px; cursor: pointer; margin-bottom: 20px; }
@@ -160,7 +159,8 @@
         <div class="modal-content">
             <i class="fas fa-times close-modal" onclick="closeModals()"></i>
             <h3>Pairing Code</h3>
-            <p id="srv-tag" style="margin-bottom:20px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
+            <p id="srv-tag" style="margin-bottom:10px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
+            <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px;">Instructions: Open WhatsApp > Linked Devices > Link with phone number instead. Enter the code below.</p>
             <input type="tel" id="phone_field">
             <button class="main-btn" onclick="requestPair()">SUBMIT</button>
             <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
@@ -176,7 +176,8 @@
         <div class="modal-content">
             <i class="fas fa-times close-modal" onclick="closeModals()"></i>
             <h3>QR Link</h3>
-            <p id="q-srv-tag" style="margin-bottom:20px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
+            <p id="q-srv-tag" style="margin-bottom:10px; font-size:0.75rem; color:var(--accent); font-weight:800;"></p>
+            <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px;">Instructions: Open WhatsApp > Linked Devices > Link a Device. Scan the QR code generated below.</p>
             <button class="main-btn" onclick="requestQR()">GENERATE QR</button>
             <button class="main-btn" style="margin-top:10px; background:#444; color:#fff;" onclick="closeModals()">CANCEL</button>
             <div id="q-loader" class="spinner"></div>
@@ -303,11 +304,19 @@
             if(num.length < 8) return notify("ERR: Invalid Number", true);
             document.getElementById('p-loader').style.display = 'block';
             try {
-                const res = await fetch(`${currentSrv}/start-pairing?number=${num}`);
+                const res = await fetch(currentSrv, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: num })
+                });
                 const data = await res.json();
-                document.getElementById('p-val').innerText = data.code;
-                document.getElementById('p-result').style.display = 'block';
-                notify("Connected!");
+                if(data.code) {
+                    document.getElementById('p-val').innerText = data.code;
+                    document.getElementById('p-result').style.display = 'block';
+                    notify("Connected!");
+                } else {
+                    notify("Generation Started, Check WhatsApp");
+                }
             } catch(e) { notify("Offline", true); }
             document.getElementById('p-loader').style.display = 'none';
         }
@@ -315,7 +324,13 @@
         async function requestQR() {
             document.getElementById('q-loader').style.display = 'block';
             notify("Fetching QR...");
-            setTimeout(() => { document.getElementById('q-loader').style.display = 'none'; notify("QR Offline", true); }, 2000);
+            try {
+                 await fetch(currentSrv, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            } catch(e) {}
+            setTimeout(() => { document.getElementById('q-loader').style.display = 'none'; }, 2000);
         }
 
         function notify(m, e=false) { 
