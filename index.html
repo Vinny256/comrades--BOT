@@ -2,365 +2,274 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMRADES-MD | Modern Interface</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>COMRADES-MD | Modern Neural Interface</title>
     
-    <link rel="icon" type="image/png" href="https://img.icons8.com/matrix/50/ff9100/matrix-desktop.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Poppins:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     
     <style>
         :root { 
             --accent: #ff9100; 
-            --accent-glow: rgba(255, 145, 0, 0.4);
-            --bg-dark: #08080a;
+            --accent-soft: rgba(255, 145, 0, 0.1);
+            --bg: #050505;
             --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-dim: #a1a1aa;
         }
 
-        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
         
         body { 
-            margin: 0; 
-            background: var(--bg-dark); 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden; 
-            min-height: 100vh;
+            background: var(--bg); color: var(--text-main); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            overflow-x: hidden; line-height: 1.6;
         }
 
-        /* Animated Background Circles */
-        .bg-visuals {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            filter: blur(80px);
-            overflow: hidden;
+        /* ━━━━━ NAVIGATION ━━━━━ */
+        nav {
+            position: fixed; top: 0; width: 100%; height: 80px;
+            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 6%; z-index: 2000;
         }
 
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.4;
-            animation: move 25s infinite alternate;
+        .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .brand img { width: 40px; border-radius: 10px; box-shadow: 0 0 20px var(--accent-soft); }
+        .brand span { font-family: 'Poppins'; font-size: 1.3rem; letter-spacing: -0.5px; }
+
+        .nav-menu { display: flex; gap: 30px; list-style: none; align-items: center; }
+        .nav-link { 
+            color: var(--text-dim); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .nav-link:hover { color: var(--accent); }
+        
+        .btn-cta { 
+            background: var(--accent); color: #000; padding: 10px 24px; 
+            border-radius: 50px; text-decoration: none; font-weight: 800; font-size: 0.8rem;
+            box-shadow: 0 10px 20px var(--accent-soft);
         }
 
-        .b1 { width: 500px; height: 500px; background: #ff5e00; top: -10%; left: -10%; }
-        .b2 { width: 400px; height: 400px; background: #ff9100; bottom: -10%; right: -5%; animation-delay: -5s; }
-        .b3 { width: 300px; height: 300px; background: #ff0055; top: 40%; left: 30%; animation-delay: -10s; }
-
-        @keyframes move {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(150px, 100px) scale(1.2); }
+        /* ━━━━━ HERO SECTION ━━━━━ */
+        .hero { 
+            min-height: 100vh; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; text-align: center;
+            padding: 0 10%; background: radial-gradient(circle at center, #111 0%, #050505 100%);
         }
 
-        /* Layout */
-        .wrapper { position: relative; z-index: 10; width: 100%; }
-        .view { display: none; min-height: 100vh; padding: 60px 5%; }
-        .view.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .status-badge {
+            background: rgba(34, 197, 94, 0.1); color: #22c55e;
+            padding: 6px 16px; border-radius: 50px; font-size: 0.7rem; font-weight: 800;
+            margin-bottom: 30px; border: 1px solid rgba(34, 197, 94, 0.2);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
 
-        /* Typography */
-        .logo-text { 
-            font-family: 'Poppins'; 
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            background: linear-gradient(to right, #ff9100, #ff5e00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-            letter-spacing: -1px;
-            margin: 0;
+        .hero h1 { font-family: 'Poppins'; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1.1; margin-bottom: 20px; }
+        .hero p { max-width: 600px; color: var(--text-dim); margin-bottom: 40px; font-size: 1rem; }
+
+        /* ━━━━━ INTERFACE CARDS ━━━━━ */
+        .interface-card {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 30px; padding: 40px; width: 100%; max-width: 550px;
+            backdrop-filter: blur(40px); display: none;
+        }
+        .interface-card.active { display: block; animation: fadeInUp 0.6s ease-out; }
+
+        /* ━━━━━ SERVER SELECTOR ━━━━━ */
+        .server-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .server-btn { 
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            padding: 15px; border-radius: 15px; cursor: pointer; text-align: left;
+        }
+        .server-btn.active { border-color: var(--accent); background: var(--accent-soft); }
+        .server-btn h4 { font-size: 0.8rem; margin-bottom: 4px; }
+        .server-btn span { font-size: 0.65rem; color: var(--text-dim); }
+
+        /* ━━━━━ INPUTS & BUTTONS ━━━━━ */
+        .iti { width: 100%; margin-bottom: 20px; }
+        input[type="tel"] { 
+            width: 100% !important; background: rgba(0,0,0,0.3) !important; 
+            border: 1px solid var(--border) !important; color: #fff !important; 
+            padding: 18px !important; border-radius: 15px !important; 
         }
 
-        /* Glass Cards */
-        .card { 
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            cursor: pointer;
-        }
-        .card:hover { 
-            border-color: var(--accent); 
-            background: rgba(255, 145, 0, 0.05); 
-            transform: translateY(-8px); 
-        }
-        .card i { font-size: 2rem; color: var(--accent); margin-bottom: 15px; }
-
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 20px; 
-            width: 100%; 
-            max-width: 1000px; 
-            margin-top: 40px; 
+        .main-btn { 
+            width: 100%; padding: 18px; border-radius: 15px; border: none;
+            background: var(--accent); color: #000; font-weight: 800; cursor: pointer;
         }
 
-        /* Form Components */
-        .terminal {
-            width: 100%;
-            max-width: 500px;
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 30px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        /* ━━━━━ LOADER ━━━━━ */
+        .loader-overlay { display: none; margin-top: 20px; }
+        .spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: rotate 1s linear infinite; margin: 0 auto; }
+        @keyframes rotate { to { transform: rotate(360deg); } }
+
+        /* ━━━━━ FOOTER ━━━━━ */
+        footer { 
+            padding: 60px 6%; border-top: 1px solid var(--border); 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;
         }
+        .footer-col h4 { margin-bottom: 20px; font-size: 0.9rem; color: var(--accent); }
+        .footer-col a { display: block; color: var(--text-dim); text-decoration: none; margin-bottom: 10px; font-size: 0.8rem; }
+        .footer-col a:hover { color: var(--accent); }
 
-        .iti { width: 100%; margin-bottom: 25px; }
-        input[type="tel"], #gh-input {
-            width: 100% !important; 
-            background: rgba(255,255,255,0.05) !important; 
-            border: 1px solid var(--glass-border) !important;
-            color: #fff !important; 
-            padding: 15px 15px 15px 85px !important; 
-            border-radius: 15px;
-            font-family: 'Inter';
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 900px) {
+            .nav-menu { display: none; } /* Add a mobile menu drawer if needed */
+            .hero h1 { font-size: 3rem; }
         }
-        #gh-input { padding: 15px !important; text-align: center; margin: 20px 0; }
-
-        .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-        .btn { 
-            padding: 16px; 
-            border-radius: 15px; 
-            border: none; 
-            font-weight: 600; 
-            cursor: pointer; 
-            font-family: 'Inter';
-            font-size: 0.9rem;
-        }
-        .btn-fill { background: var(--accent); color: #000; box-shadow: 0 4px 15px var(--accent-glow); }
-        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
-        .btn:hover { opacity: 0.9; transform: scale(1.02); }
-
-        /* Loader */
-        #loader-bar { display: none; width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin: 20px 0; }
-        #loader-bar::after { content: ""; display: block; width: 40%; height: 100%; background: var(--accent); animation: slide 1.5s infinite; }
-        @keyframes slide { from { margin-left: -40%; } to { margin-left: 100%; } }
-
-        /* Session/Display Boxes */
-        .stagnant-box, .session-id-box { 
-            display: none; 
-            width: 100%; 
-            margin-top: 25px; 
-            background: rgba(0,0,0,0.2); 
-            border-radius: 15px; 
-            padding: 20px; 
-        }
-        #pair-val { font-size: 2.5rem; font-weight: 700; color: var(--accent); letter-spacing: 5px; }
-
-        /* Responsive Fixes */
-        @media (max-width: 600px) {
-            .view { padding: 40px 20px; }
-            .terminal { padding: 25px; }
-            .grid { grid-template-columns: 1fr 1fr; }
-            .logo-text { font-size: 2.2rem; }
-        }
-
-        /* Modal */
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 5000; }
-        .modal { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            background: #111; border: 1px solid var(--accent); border-radius: 25px; padding: 40px; width: 90%; max-width: 400px; z-index: 5001; 
-        }
-
-        .music-ctrl { position: fixed; bottom: 20px; right: 20px; background: var(--glass); border: 1px solid var(--glass-border); padding: 10px 20px; border-radius: 50px; font-size: 0.7rem; color: #888; cursor: pointer; backdrop-filter: blur(10px); }
-        footer { margin-top: 50px; opacity: 0.4; font-size: 0.7rem; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div class="bg-visuals">
-        <div class="blob b1"></div>
-        <div class="blob b2"></div>
-        <div class="blob b3"></div>
+    <nav>
+        <div class="brand" onclick="location.reload()">
+            <img src="https://img.icons8.com/matrix/50/ff9100/matrix-desktop.png" alt="V-HUB">
+            <span>COMRADES-MD</span>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#" class="nav-link" onclick="showSection('hero')"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('pair')"><i class="fas fa-key"></i> Pair Code</a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('qr')"><i class="fas fa-qrcode"></i> QR Code</a></li>
+            <li><a href="https://github.com/Vinny256/COMRADES-MD-BOT" class="nav-link"><i class="fas fa-code-branch"></i> Source</a></li>
+            <li><a href="https://wa.me/254768666068" class="nav-link"><i class="fas fa-headset"></i> Support</a></li>
+            <li><a href="#" class="btn-cta" onclick="showSection('pair')"><i class="fas fa-link"></i> Get Session</a></li>
+        </ul>
+    </nav>
+
+    <div id="hero-sec" class="hero active-sec">
+        <div class="status-badge"><div class="dot"></div> Session Server Active</div>
+        <h1>Advanced WhatsApp<br>Bot Solution</h1>
+        <p>The next-generation neural framework for automated commerce, school management, and personal assistance. Deploy within minutes.</p>
+        <button class="main-btn" style="max-width: 250px;" onclick="showSection('pair')">GET STARTED <i class="fas fa-arrow-right"></i></button>
     </div>
 
-    <audio id="bg-audio" loop src="https://raw.githubusercontent.com/Vinny256/COMRADES-MD/main/assets/play.mp3"></audio>
-    <div class="music-ctrl" onclick="toggleMusic()" id="m-btn">AUDIO: OFF</div>
-
-    <div class="overlay" id="overlay"></div>
-    <div class="modal" id="fork-modal">
-        <div class="logo-text" style="font-size: 1.5rem;">FORK_GUARD</div>
-        <input type="text" id="gh-input" placeholder="GITHUB_USER">
-        <button class="btn btn-fill" style="width:100%;" onclick="runForkVerify()">VERIFY_REPO</button>
-        <p onclick="closeGuard()" style="text-align:center; font-size: 0.6rem; margin-top: 20px; cursor: pointer; color: #666;">[ BYPASS ]</p>
-    </div>
-
-    <div class="wrapper">
-        <section id="home-view" class="view active">
-            <div class="logo-text">COMRADES-MD</div>
-            <p style="text-align:center; color: #888; margin-top: 10px;">V_3.0 NEURAL INTERFACE</p>
+    <section id="interface-sec" class="hero" style="display:none; padding-top: 120px;">
+        
+        <div id="pair-card" class="interface-card">
+            <h2 style="margin-bottom: 10px;">Link via Code</h2>
+            <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 30px;">Select your preferred server and enter your number.</p>
             
-            <div style="margin: 40px 0;">
-                <button class="btn btn-fill" style="padding: 18px 60px;" onclick="navTo('term-view')">START SESSION</button>
-            </div>
-
-            <div class="grid">
-                <div class="card" onclick="window.open('https://github.com/Vinny256/COMRADES-MD-BOT')">
-                    <i class="fas fa-code-branch"></i><h3>SOURCE</h3>
+            <div class="server-grid">
+                <div class="server-btn active" id="p-srv1" onclick="setServer('p', 1)">
+                    <h4>SERVER 1</h4><span>Fast (Heroku)</span>
                 </div>
-                <div class="card" onclick="openGuard('https://dashboard.heroku.com/new?template=https://github.com/Vinny256/COMRADES-MD-BOT')">
-                    <i class="fas fa-server"></i><h3>HEROKU</h3>
-                </div>
-                <div class="card" onclick="openGuard('https://railway.app/new/template?template=https://github.com/Vinny256/COMRADES-MD-BOT')">
-                    <i class="fas fa-train"></i><h3>RAILWAY</h3>
-                </div>
-                <div class="card" onclick="openGuard('https://render.com/deploy?repo=https://github.com/Vinny256/COMRADES-MD-BOT')">
-                    <i class="fas fa-cloud-upload-alt"></i><h3>RENDER</h3>
+                <div class="server-btn" id="p-srv2" onclick="setServer('p', 2)">
+                    <h4>SERVER 2</h4><span>Stable (Render)</span>
                 </div>
             </div>
-            <footer>&copy; 2026 COMRADES-MD | POWERED BY VINNY256</footer>
-        </section>
 
-        <section id="term-view" class="view">
-            <div class="terminal">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                    <span onclick="navTo('home-view')" style="cursor: pointer; color: var(--accent); font-weight: bold;"><i class="fas fa-chevron-left"></i> BACK</span>
-                    <span style="font-size: 0.7rem; color: #444;">SECURE_AUTH</span>
+            <input type="tel" id="phone_field">
+            <button class="main-btn" onclick="requestPair()">GENERATE CODE</button>
+            <p style="margin-top: 20px; font-size: 0.75rem; cursor: pointer; color: var(--accent);" onclick="showSection('qr')">Scan QR instead?</p>
+            
+            <div id="pair-loader" class="loader-overlay"><div class="spinner"></div></div>
+            
+            <div id="result-box" style="display:none; margin-top: 30px; background: #000; padding: 25px; border-radius: 20px; border: 2px dashed var(--accent);">
+                <div id="pair-val" style="font-size: 2.5rem; font-weight: 800; color: var(--accent); letter-spacing: 5px;"></div>
+                <button class="main-btn" style="margin-top: 15px; background: transparent; color: #fff; border: 1px solid var(--border);" onclick="copy('pair-val')">COPY CODE</button>
+            </div>
+        </div>
+
+        <div id="qr-card" class="interface-card">
+            <h2 style="margin-bottom: 10px;">Link via QR</h2>
+            <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 30px;">Scan the code using WhatsApp Linked Devices.</p>
+
+            <div class="server-grid">
+                <div class="server-btn active" id="q-srv1" onclick="setServer('q', 1)">
+                    <h4>SERVER 1</h4><span>Heroku</span>
                 </div>
-
-                <input type="tel" id="phone_field">
-
-                <div class="btn-group">
-                    <button class="btn btn-fill" onclick="fetchPair()">GENERATE PAIRING CODE</button>
-                    <button class="btn btn-outline" onclick="fetchQR()">GENERATE QR CODE</button>
-                </div>
-
-                <div id="loader-bar"></div>
-
-                <div id="master-display">
-                    <div id="pair-display" class="stagnant-box">
-                        <div id="pair-val"></div>
-                        <p style="color: #666; font-size: 0.8rem; margin: 15px 0;">Enter this on your WhatsApp</p>
-                        <button class="btn btn-outline" style="width:100%" onclick="copy('pair-val')">COPY CODE</button>
-                    </div>
-
-                    <div id="qr-display" class="stagnant-box">
-                        <div id="qr-holder" style="display: flex; justify-content: center;"></div>
-                    </div>
-
-                    <div id="session-display" class="session-id-box">
-                        <div style="color: var(--accent); font-size: 0.7rem; margin-bottom: 10px;">SUCCESS: SESSION DECRYPTED</div>
-                        <div id="session-val" style="word-break: break-all; color: #fff; margin-bottom: 20px; font-size: 0.8rem; border-left: 2px solid var(--accent); padding-left: 15px;"></div>
-                        <button class="btn btn-fill" style="width: 100%;" onclick="copy('session-val')">COPY SESSION ID</button>
-                    </div>
+                <div class="server-btn" id="q-srv2" onclick="setServer('q', 2)">
+                    <h4>SERVER 2</h4><span>Render</span>
                 </div>
             </div>
-        </section>
-    </div>
+
+            <button class="main-btn" onclick="requestQR()">GENERATE QR IMAGE</button>
+            <p style="margin-top: 20px; font-size: 0.75rem; cursor: pointer; color: var(--accent);" onclick="showSection('pair')">Use pairing code instead?</p>
+            
+            <div id="qr-loader" class="loader-overlay"><div class="spinner"></div></div>
+            <div id="qr-holder" style="margin-top: 30px; display: flex; justify-content: center;"></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-col">
+            <div class="brand"><span>COMRADES-MD</span></div>
+            <p style="font-size: 0.75rem; margin-top: 15px; color: var(--text-dim);">The most advanced bot shell with ghost loading architecture.</p>
+        </div>
+        <div class="footer-col">
+            <h4>NAVIGATION</h4>
+            <a href="#" onclick="showSection('hero')">Landing Page</a>
+            <a href="#" onclick="showSection('pair')">Pairing System</a>
+            <a href="#" onclick="showSection('qr')">QR Authentication</a>
+        </div>
+        <div class="footer-col">
+            <h4>RESOURCES</h4>
+            <a href="https://github.com/Vinny256/COMRADES-MD-BOT">Source Code</a>
+            <a href="https://wa.me/254768666068">Owner Contact</a>
+            <a href="https://wa.me/254768666068">Support Group</a>
+        </div>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
-        /* ALL ORIGINAL LOGIC RETAINED BELOW */
-        const socket = io("https://mt--affestkm1-eba9a25ed5ef.herokuapp.com");
-        const iti = window.intlTelInput(document.querySelector("#phone_field"), { 
-            separateDialCode: true, 
-            initialCountry: "ke", 
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js" 
+        let currentSrv = "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com";
+        const iti = window.intlTelInput(document.querySelector("#phone_field"), {
+            separateDialCode: true,
+            initialCountry: "auto",
+            geoIpLookup: callback => fetch("https://ipapi.co/json").then(res => res.json()).then(data => callback(data.country_code))
         });
 
-        let isWaiting = false;
+        function showSection(type) {
+            const hero = document.getElementById('hero-sec');
+            const interface = document.getElementById('interface-sec');
+            const pair = document.getElementById('pair-card');
+            const qr = document.getElementById('qr-card');
 
-        function notify(t, err=false) { 
-            Toastify({ text: t, duration: 3000, style: { background: err?"#ff4444":"#ff9100", color: "#fff", borderRadius: "10px", fontFamily: 'Inter' } }).showToast(); 
+            hero.style.display = type === 'hero' ? 'flex' : 'none';
+            interface.style.display = type === 'hero' ? 'none' : 'flex';
+            pair.classList.toggle('active', type === 'pair');
+            qr.classList.toggle('active', type === 'qr');
+            window.scrollTo(0, 0);
         }
 
-        function clearDisplay() {
-            document.getElementById('pair-display').style.display = 'none';
-            document.getElementById('qr-display').style.display = 'none';
-            document.getElementById('session-display').style.display = 'none';
-            document.getElementById('loader-bar').style.display = 'block';
+        function setServer(prefix, id) {
+            document.querySelectorAll(`.${prefix}-server-btn`).forEach(b => b.classList.remove('active'));
+            document.getElementById(`${prefix}-srv${id}`).classList.add('active');
+            currentSrv = id === 1 ? "https://mt--affestkm1-eba9a25ed5ef.herokuapp.com" : "https://your-render-url.com";
+            notify(`Server ${id} Selected`);
         }
 
-        function fetchQR() {
-            isWaiting = true;
-            clearDisplay();
-            notify("Requesting QR Code...");
-            fetch(`${socket.io.uri}/start-qr`, { method: 'POST' });
-        }
-
-        function fetchPair() {
+        async function requestPair() {
             const num = iti.getNumber().replace(/\D/g, '');
-            if(num.length < 8) return notify("ERR: Invalid Number", true);
-            isWaiting = true;
-            clearDisplay();
-            notify("Requesting Pairing Code...");
-            fetch(`${socket.io.uri}/start-pairing`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phoneNumber: num })
-            });
+            if(num.length < 8) return notify("Invalid Number", true);
+            
+            document.getElementById('pair-loader').style.display = 'block';
+            try {
+                const res = await fetch(`${currentSrv}/start-pairing?number=${num}`);
+                const data = await res.json();
+                document.getElementById('pair-val').innerText = data.code;
+                document.getElementById('result-box').style.display = 'block';
+                notify("Code Generated Successfully");
+            } catch(e) { notify("Server Connection Failed", true); }
+            document.getElementById('pair-loader').style.display = 'none';
         }
 
-        socket.on('qr', url => {
-            if(!isWaiting) return;
-            document.getElementById('loader-bar').style.display = 'none';
-            document.getElementById('qr-display').style.display = 'block';
-            document.getElementById('qr-holder').innerHTML = `<img src="${url}" style="width:230px; border-radius:15px; border:8px solid #fff;">`;
-            notify("QR Code Ready");
-            isWaiting = false;
-        });
-
-        socket.on('pairing-code', code => {
-            if(!isWaiting) return;
-            document.getElementById('loader-bar').style.display = 'none';
-            document.getElementById('pair-display').style.display = 'block';
-            document.getElementById('pair-val').innerText = code;
-            notify("Pairing Code Ready");
-            isWaiting = false;
-        });
-
-        socket.on('session', id => {
-            isWaiting = false;
-            clearDisplay();
-            document.getElementById('loader-bar').style.display = 'none';
-            document.getElementById('session-display').style.display = 'block';
-            document.getElementById('session-val').innerText = id;
-            notify("Connection Established!");
-        });
-
-        let pendingUrl = "";
-        function openGuard(u) { pendingUrl = u; document.getElementById('overlay').style.display='block'; document.getElementById('fork-modal').style.display='block'; }
-        function closeGuard() { document.getElementById('overlay').style.display='none'; document.getElementById('fork-modal').style.display='none'; }
-        
-        async function runForkVerify() {
-            const user = document.getElementById('gh-input').value.trim();
-            if(!user) return notify("User ID Required", true);
-            try {
-                const res = await fetch(`https://api.github.com/repos/Vinny256/COMRADES-MD/forks`);
-                const f = await res.json();
-                if(f.some(x=>x.owner.login.toLowerCase()===user.toLowerCase())) {
-                    notify("Fork Verified"); setTimeout(()=>{ window.open(pendingUrl); closeGuard(); }, 1000);
-                } else {
-                    notify("Fork Not Found", true); setTimeout(()=>window.open('https://github.com/Vinny256/COMRADES-MD/fork'), 1000);
-                }
-            } catch(e) { notify("API Error", true); }
+        function notify(m, err=false) {
+            Toastify({ text: m, style: { background: err ? "#ef4444" : "#ff9100", color: "#fff", borderRadius: "12px", fontWeight: "600" } }).showToast();
         }
 
         function copy(id) {
             navigator.clipboard.writeText(document.getElementById(id).innerText);
-            notify("Copied to clipboard");
-        }
-
-        function navTo(id) { 
-            document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); 
-            document.getElementById(id).classList.add('active'); 
-            if(id === 'term-view') toggleMusic(true);
-        }
-
-        function toggleMusic(force=false) {
-            const a = document.getElementById('bg-audio');
-            const b = document.getElementById('m-btn');
-            if(a.paused || force) { a.play().catch(()=>{}); b.innerText="AUDIO: ON"; }
-            else { a.pause(); b.innerText="AUDIO: OFF"; }
+            notify("Copied to Clipboard");
         }
     </script>
 </body>
