@@ -543,14 +543,14 @@
         }
 
         function openPairModal(id) {
-            currentBaseUrl = id === 1 ? "https://comrades-session-4d2e6baccb76.herokuapp.com" : "https://comrades-backend.onrender.com";
+            currentBaseUrl = id === 1 ? "https://comrades-session-4d2e6baccb76.herokuapp.com" : "https://comrades-backend-5c1t.onrender.com";
             currentSrvType = "pairing";
             document.getElementById('srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('pair-modal').style.display = 'flex';
         }
 
         function openQRModal(id) {
-            currentBaseUrl = id === 1 ? "https://comrades-session-4d2e6baccb76.herokuapp.com" : "https://comrades-backend.onrender.com";
+            currentBaseUrl = id === 1 ? "https://comrades-session-4d2e6baccb76.herokuapp.com" : "https://comrades-backend-5c1t.onrender.com";
             currentSrvType = "qr";
             document.getElementById('q-srv-tag').innerText = "GATEWAY: SERVER " + id;
             document.getElementById('qr-modal').style.display = 'flex';
