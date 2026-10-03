@@ -312,17 +312,17 @@
 
     <section id="interface-container" class="hero" style="display:none;">
         <div id="pair-card" class="interface-card">
-            <h2>Select Pair Server</h2>
-            <div class="server-box" onclick="openPairModal(1)"><h4>SERVER 1</h4><p>High Speed Heroku</p></div>
-            <div class="server-box" onclick="openPairModal(2)"><h4>SERVER 2</h4><p>Stable Render</p></div>
+            <h2>Select Deployment Mode</h2>
+            <div class="server-box" onclick="openPairModal(1, 'auto')"><h4>AUTO LINK (RECOMMENDED)</h4><p>Automatically provisions and deploys a dedicated server when linked.</p></div>
+            <div class="server-box" onclick="openPairModal(1, 'manual')"><h4>MANUAL DEPLOY</h4><p>Generates a Session ID for you to deploy manually on your own hosting panel.</p></div>
             <p onclick="showSection('qr')" style="color:var(--accent); cursor:pointer; margin-top:20px;">Scan QR instead?</p>
             <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:var(--text-main);" onclick="showSection('hero')">GO BACK</button>
         </div>
 
         <div id="qr-card" class="interface-card">
-            <h2>Select QR Server</h2>
-            <div class="server-box" onclick="openQRModal(1)"><h4>SERVER 1</h4><p>Heroku Instance</p></div>
-            <div class="server-box" onclick="openQRModal(2)"><h4>SERVER 2</h4><p>Render Instance</p></div>
+            <h2>Select Deployment Mode</h2>
+            <div class="server-box" onclick="openQRModal(1, 'auto')"><h4>AUTO LINK (RECOMMENDED)</h4><p>Automatically provisions and deploys a dedicated server when scanned.</p></div>
+            <div class="server-box" onclick="openQRModal(1, 'manual')"><h4>MANUAL DEPLOY</h4><p>Generates a Session ID for you to deploy manually on your own hosting panel.</p></div>
             <p onclick="showSection('pair')" style="color:var(--accent); cursor:pointer; margin-top:20px;">Use Pair Code instead?</p>
             <button class="main-btn" style="margin-top:20px; background:transparent; border:1px solid var(--accent); color:var(--text-main);" onclick="showSection('hero')">GO BACK</button>
         </div>
@@ -439,6 +439,7 @@
     <script>
         let currentBaseUrl = "";
         let currentSrvType = "";
+        let currentMode = "";
         let pendingUrl = "";
         let socket;
 
@@ -542,17 +543,21 @@
             }
         }
 
-        function openPairModal(id) {
+        function openPairModal(id, mode = 'manual') {
             currentBaseUrl = id === 1 ? "https://warm-dawn-38906-97d5ad32ab44.herokuapp.com" : "https://comrades-backend-9ni5.onrender.com";
             currentSrvType = "pairing";
-            document.getElementById('srv-tag').innerText = "GATEWAY: SERVER " + id;
+            currentMode = mode;
+            let modeText = mode === 'auto' ? "MODE: AUTO DEPLOY" : "MODE: MANUAL DEPLOY";
+            document.getElementById('srv-tag').innerText = modeText;
             document.getElementById('pair-modal').style.display = 'flex';
         }
 
-        function openQRModal(id) {
+        function openQRModal(id, mode = 'manual') {
             currentBaseUrl = id === 1 ? "https://warm-dawn-38906-97d5ad32ab44.herokuapp.com" : "https://comrades-backend-9ni5.onrender.com";
             currentSrvType = "qr";
-            document.getElementById('q-srv-tag').innerText = "GATEWAY: SERVER " + id;
+            currentMode = mode;
+            let modeText = mode === 'auto' ? "MODE: AUTO DEPLOY" : "MODE: MANUAL DEPLOY";
+            document.getElementById('q-srv-tag').innerText = modeText;
             document.getElementById('qr-modal').style.display = 'flex';
         }
 
@@ -601,7 +606,7 @@
                 await fetch(`${currentBaseUrl}/start-pairing`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phoneNumber: num, sessionType: sessType })
+                    body: JSON.stringify({ phoneNumber: num, sessionType: sessType, mode: currentMode })
                 });
                 notify("Request Sent! Wait for code...");
             } catch(e) { 
@@ -627,7 +632,7 @@
                 await fetch(`${currentBaseUrl}/start-qr`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sessionType: sessType })
+                    body: JSON.stringify({ sessionType: sessType, mode: currentMode })
                 });
             } catch(e) { 
                 notify("Server Offline", true); 
